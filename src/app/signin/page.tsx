@@ -3,11 +3,14 @@
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import Link from 'next/link';
+import { Label } from '@/components/ui/label';
 
 export default function SignInPage() {
     const [loading, setLoading] = useState(false);
+    const [agreed, setAgreed] = useState(false);
 
     const handleGithub = async () => {
+        if (!agreed) return;
         setLoading(true);
         await signIn('github', { callbackUrl: '/oauth/github' });
     };
@@ -15,11 +18,12 @@ export default function SignInPage() {
     return (
         <div style={{
             minHeight: '100vh',
-            background: '#fff',
+            background: 'var(--bg)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             padding: '24px',
+            transition: 'background-color 0.3s ease'
         }}>
             {/* Ambient blobs */}
             <div aria-hidden style={{ position: 'fixed', top: '-30%', left: '-10%', width: '600px', height: '600px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(91,192,235,0.12), transparent 70%)', pointerEvents: 'none', zIndex: 0 }} />
@@ -27,35 +31,61 @@ export default function SignInPage() {
 
             <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '420px' }}>
                 {/* Card */}
-                <div style={{
-                    background: '#fff',
-                    border: '1px solid #E2E8F0',
-                    borderRadius: '24px',
+                <div className="glass-card" style={{
                     padding: '48px 44px',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.04), 0 24px 60px rgba(0,0,0,0.08)',
                     textAlign: 'center',
                 }}>
                     {/* Logo */}
                     <div style={{ marginBottom: '32px' }}>
                         <img src="/Logo-withoutbg.png" alt="Frenix" style={{ width: '56px', height: '56px', marginBottom: '16px' }} />
-                        <h1 style={{ fontSize: '22px', fontWeight: '800', color: '#0F172A', letterSpacing: '-0.5px' }}>Sign in to Frenix</h1>
-                        <p style={{ color: '#64748B', fontSize: '14px', marginTop: '8px', lineHeight: '1.6' }}>
+                        <h1 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '-0.5px' }}>Sign in to Frenix</h1>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '8px', lineHeight: '1.6' }}>
                             Connect your GitHub account to access your AI gateway, API keys, and dashboard.
                         </p>
+                    </div>
+
+                    {/* Terms & Privacy Checkbox */}
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '12px',
+                        textAlign: 'left',
+                        marginBottom: '24px',
+                        padding: '16px',
+                        background: 'rgba(255, 255, 255, 0.02)',
+                        borderRadius: '12px',
+                        border: '1px solid var(--border)'
+                    }}>
+                        <input
+                            type="checkbox"
+                            id="terms-agreed"
+                            checked={agreed}
+                            onChange={(e) => setAgreed(e.target.checked)}
+                            style={{
+                                marginTop: '2px',
+                                width: '18px',
+                                height: '18px',
+                                cursor: 'pointer',
+                                accentColor: 'var(--primary)'
+                            }}
+                        />
+                        <Label htmlFor="terms-agreed" style={{ fontSize: '13px', lineHeight: '1.5', color: 'var(--text-muted)' }}>
+                            I agree to the <Link href="/terms" style={{ color: 'var(--primary)', fontWeight: '600' }}>Terms of Service</Link>, <Link href="/privacy" style={{ color: 'var(--primary)', fontWeight: '600' }}>Privacy Policy</Link>, and <Link href="/refund" style={{ color: 'var(--primary)', fontWeight: '600' }}>Refund Policy</Link>.
+                        </Label>
                     </div>
 
                     {/* GitHub Button */}
                     <button
                         onClick={handleGithub}
-                        disabled={loading}
+                        disabled={loading || !agreed}
                         style={{
                             width: '100%',
                             padding: '13px 20px',
                             borderRadius: '12px',
-                            background: '#0f172a',
-                            color: '#fff',
+                            background: agreed ? 'var(--text-main)' : 'var(--border)',
+                            color: agreed ? 'var(--bg)' : 'var(--text-muted)',
                             border: 'none',
-                            cursor: loading ? 'not-allowed' : 'pointer',
+                            cursor: (loading || !agreed) ? 'not-allowed' : 'pointer',
                             fontFamily: 'Outfit, sans-serif',
                             fontWeight: '600',
                             fontSize: '15px',
@@ -63,10 +93,10 @@ export default function SignInPage() {
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: '12px',
-                            transition: 'opacity 0.2s, transform 0.2s',
+                            transition: 'all 0.3s ease',
                             opacity: loading ? 0.7 : 1,
                             marginBottom: '20px',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                            boxShadow: agreed ? 'var(--shadow)' : 'none',
                         }}
                     >
                         {/* GitHub icon SVG */}
@@ -78,23 +108,16 @@ export default function SignInPage() {
 
                     {/* Divider */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                        <div style={{ flex: 1, height: '1px', background: '#E2E8F0' }} />
-                        <span style={{ color: '#94A3B8', fontSize: '12px' }}>More providers coming soon</span>
-                        <div style={{ flex: 1, height: '1px', background: '#E2E8F0' }} />
+                        <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
+                        <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>More providers coming soon</span>
+                        <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
                     </div>
 
                     {/* Back */}
-                    <Link href="/" style={{ color: '#64748B', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px', transition: 'color 0.2s' }}>
+                    <Link href="/" style={{ color: 'var(--text-muted)', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px', transition: 'color 0.2s' }}>
                         ← Back to home
                     </Link>
                 </div>
-
-                {/* Footer note */}
-                <p style={{ textAlign: 'center', color: '#94A3B8', fontSize: '12px', marginTop: '20px', lineHeight: '1.6' }}>
-                    By signing in you agree to our{' '}
-                    <a href="#" style={{ color: '#64748B', textDecoration: 'underline' }}>Terms</a> &amp;{' '}
-                    <a href="#" style={{ color: '#64748B', textDecoration: 'underline' }}>Privacy Policy</a>.
-                </p>
             </div>
         </div>
     );

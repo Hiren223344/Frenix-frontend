@@ -3,119 +3,98 @@
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { Providers } from "@/components/Providers";
-
-const navItems = [
-    { name: 'Home', path: '/', icon: '⌂' },
-    { name: 'Dashboard', path: '/dashboard', icon: '◈' },
-    { name: 'API Keys', path: '/api-keys', icon: '⌗' },
-    { name: 'Settings', path: '/settings', icon: '⚙' },
-];
-
-function Sidebar() {
-    const pathname = usePathname();
-    const { data: session } = useSession();
-
-    return (
-        <nav className="sidebar">
-            {/* Brand */}
-            <div className="logo" style={{ marginBottom: '36px', padding: '0 8px' }}>
-                <img src="/Logo-withoutbg.png" alt="Frenix" style={{ width: '40px', height: '40px' }} />
-                <span>Frenix</span>
-            </div>
-
-            {/* Nav */}
-            <div style={{ flex: 1 }}>
-                <p style={{ fontSize: '10px', fontWeight: '700', letterSpacing: '1.5px', color: 'var(--text-muted)', marginBottom: '12px', padding: '0 12px', textTransform: 'uppercase' }}>Navigation</p>
-                {navItems.map((item) => (
-                    <Link key={item.path} href={item.path} className={`sidebar-item ${pathname === item.path ? 'active' : ''}`}>
-                        <span className="sidebar-icon">{item.icon}</span>
-                        {item.name}
-                    </Link>
-                ))}
-            </div>
-
-            {/* User footer */}
-            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '20px', marginTop: '20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 12px', marginBottom: '12px' }}>
-                    {session?.user?.image
-                        ? <img src={session.user.image} style={{ width: '34px', height: '34px', borderRadius: '50%', border: '2px solid var(--border)' }} />
-                        : <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary), var(--secondary))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>👤</div>
-                    }
-                    <div style={{ overflow: 'hidden' }}>
-                        <div style={{ fontSize: '13px', fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{session?.user?.name || 'User'}</div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '160px' }}>{session?.user?.email || ''}</div>
-                    </div>
-                </div>
-                <button
-                    onClick={() => signOut({ callbackUrl: '/' })}
-                    className="sidebar-item"
-                    style={{ width: '100%', marginBottom: 0, border: 'none', cursor: 'pointer', background: 'transparent', textAlign: 'left', color: 'var(--text-muted)' }}
-                >
-                    <span className="sidebar-icon">↩</span>
-                    Sign Out
-                </button>
-            </div>
-        </nav>
-    );
-}
+import { useEffect, useState } from 'react';
+import StaggeredMenu from './ui/StaggeredMenu';
+import { NavBar } from "@/components/ui/tubelight-navbar";
+import { Home, LayoutDashboard, Key, FileText, Settings, LogOut, LogIn, User } from 'lucide-react';
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const isLanding = pathname === '/';
     const isAuth = pathname.startsWith('/api/auth') || pathname === '/signin';
 
+    const { data: session, status } = useSession();
+
     if (isAuth) return <>{children}</>;
 
-    return (
-        <div style={{ display: 'flex' }}>
-            {/* Sidebar only on inner pages */}
-            {!isLanding && <Sidebar />}
+    const navItems = [
+        { name: 'Home', url: '/', icon: Home },
+        { name: 'Pricing', url: '/#pricing', icon: FileText },
+        { name: 'Docs', url: '/docs', icon: FileText },
+        { name: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
+        { name: 'API Keys', url: '/api-keys', icon: Key }
+    ];
 
-            <div style={{ flex: 1, marginLeft: isLanding ? 0 : '260px', minHeight: '100vh' }}>
-                {/* Landing Navbar */}
-                {isLanding && (
-                    <header className="navbar">
-                        <div className="logo">
-                            <img src="/Logo-withoutbg.png" alt="Frenix" style={{ width: '44px', height: '44px' }} />
+    if (status === 'authenticated') {
+        navItems.push({ name: 'Sign Out', url: '#logout', icon: LogOut });
+    } else if (status === 'unauthenticated') {
+        navItems.push({ name: 'Sign In', url: '/signin', icon: LogIn });
+    }
+
+    return (
+        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <NavBar items={navItems} />
+
+            {/* Height spacer to avoid content going under the fixed top navbar */}
+            <div style={{ height: '80px' }} aria-hidden="true" />
+
+            <main style={{
+                flex: 1,
+                position: 'relative',
+                width: '100%',
+                maxWidth: '1200px',
+                margin: '0 auto',
+                padding: isLanding ? '0' : '0 24px'
+            }}>
+                {children}
+            </main>
+
+            {/* Landing footer */}
+            {isLanding && (
+                <footer style={{
+                    padding: '64px 80px',
+                    borderTop: '1px solid var(--border)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    color: 'var(--text-muted)',
+                    fontSize: '14px',
+                    background: 'var(--bg)',
+                    position: 'relative',
+                    zIndex: 10
+                }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '300px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-main)', fontWeight: '800', fontSize: '20px', letterSpacing: '-0.5px' }}>
+                            <img src="/Logo-withoutbg.png" style={{ width: '32px', height: '32px' }} />
                             <span>Frenix</span>
                         </div>
-                        <nav style={{ display: 'flex', gap: '36px', alignItems: 'center' }}>
-                            <Link href="/dashboard" style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: '500', transition: 'color 0.2s' }}>Dashboard</Link>
-                            <Link href="/api-keys" style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: '500', transition: 'color 0.2s' }}>API Keys</Link>
-                            <Link href="/signin" className="btn-primary" style={{ padding: '10px 24px', fontSize: '14px' }}>
-                                Sign In with GitHub
-                            </Link>
-                        </nav>
-                    </header>
-                )}
-
-                {/* Page content */}
-                {children}
-
-                {/* Landing footer */}
-                {isLanding && (
-                    <footer style={{
-                        padding: '32px 80px',
-                        borderTop: '1px solid var(--border)',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        color: 'var(--text-muted)',
-                        fontSize: '13px',
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <img src="/Logo-withoutbg.png" style={{ width: '24px', height: '24px' }} />
-                            <span>© 2026 Frenix Inc.</span>
+                        <p style={{ lineHeight: '1.6' }}>The universal AI gateway for developers. Route, monitor, and scale your AI applications with ease.</p>
+                        <div style={{ display: 'flex', gap: '16px', marginTop: '8px' }}>
+                            <a href="https://github.com" style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--bg-soft)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>𝕏</a>
+                            <a href="https://github.com" style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--bg-soft)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}></a>
+                            <a href="https://github.com" style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--bg-soft)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}></a>
                         </div>
-                        <div style={{ display: 'flex', gap: '32px' }}>
-                            <a href="#" style={{ color: 'var(--text-muted)' }}>Terms</a>
-                            <a href="#" style={{ color: 'var(--text-muted)' }}>Privacy</a>
-                            <a href="#" style={{ color: 'var(--text-muted)' }}>GitHub</a>
+                        <span style={{ fontSize: '12px', marginTop: '12px' }}>© 2026 Frenix Inc. All rights reserved.</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '80px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                            <span style={{ fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>Product</span>
+                            <Link href="/#pricing" className="hover-text-primary">Pricing</Link>
+                            <Link href="/dashboard" className="hover-text-primary">Dashboard</Link>
+                            <Link href="/api-keys" className="hover-text-primary">API Keys</Link>
+                            <Link href="/docs" className="hover-text-primary">Documentation</Link>
                         </div>
-                    </footer>
-                )}
-            </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                            <span style={{ fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>Support</span>
+                            <Link href="/terms" className="hover-text-primary">Terms of Service</Link>
+                            <Link href="/privacy" className="hover-text-primary">Privacy Policy</Link>
+                            <Link href="/refund" className="hover-text-primary">Refund Policy</Link>
+                            <Link href="/status" className="hover-text-primary">Status</Link>
+                            <a href="mailto:support@frenix.io" className="hover-text-primary">Contact Support</a>
+                        </div>
+                    </div>
+                </footer>
+            )}
         </div>
     );
 }

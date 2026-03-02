@@ -3,6 +3,8 @@
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 
 interface StoredKey {
     plainKey: string;   // only present right after creation
@@ -12,11 +14,50 @@ interface StoredKey {
     createdNow: boolean;
 }
 
+function ApiKeysSkeleton() {
+    return (
+        <div className="dashboard-container">
+            <div className="page-header animate-fade">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                        <Skeleton style={{ height: '32px', width: '180px', marginBottom: '8px' }} />
+                        <Skeleton style={{ height: '14px', width: '320px' }} />
+                    </div>
+                    <Skeleton style={{ height: '40px', width: '150px', borderRadius: '10px' }} />
+                </div>
+            </div>
+
+            <div className="glass-card" style={{ padding: '32px', marginBottom: '28px' }}>
+                <Skeleton style={{ height: '24px', width: '200px', marginBottom: '24px' }} />
+                <Skeleton style={{ height: '60px', width: '100%', borderRadius: '10px' }} />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <div className="glass-card" style={{ padding: '28px', height: '160px' }}>
+                    <Skeleton style={{ height: '20px', width: '120px', marginBottom: '16px' }} />
+                    <Skeleton style={{ height: '40px', width: '100%', borderRadius: '8px' }} />
+                </div>
+                <div className="glass-card" style={{ padding: '28px', height: '160px' }}>
+                    <Skeleton style={{ height: '20px', width: '120px', marginBottom: '16px' }} />
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        {[1, 2, 3].map(i => <Skeleton key={i} style={{ height: '24px', width: '60px', borderRadius: '8px' }} />)}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function CopyBtn({ text }: { text: string }) {
     const [copied, setCopied] = useState(false);
     return (
         <button
-            onClick={() => { navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+            onClick={() => {
+                navigator.clipboard.writeText(text);
+                setCopied(true);
+                toast.success('API Key copied to clipboard');
+                setTimeout(() => setCopied(false), 2000);
+            }}
             style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: copied ? '#059669' : 'var(--text-muted)', fontSize: '13px', padding: '4px 8px', borderRadius: '6px', transition: 'color 0.2s', fontFamily: 'Outfit, sans-serif', fontWeight: 600 }}
         >
             {copied ? '✓ Copied' : '⎘ Copy'}
@@ -58,18 +99,26 @@ export default function ApiKeys() {
         try {
             const res = await fetch('/api/gateway/keys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
             const data = await res.json();
-            if (!res.ok) { setError(data.error || 'Failed to create key'); return; }
+            if (!res.ok) {
+                const msg = data.error || 'Failed to create key';
+                setError(msg);
+                toast.error(msg);
+                return;
+            }
             setKey({ plainKey: data.key, keyPrefix: data.key.substring(0, 20), tier: data.tier, email: data.email || session?.user?.email || '', createdNow: true });
             setHasKey(true);
+            toast.success('Your API Key has been generated successfully!');
         } catch {
-            setError('Could not connect to gateway. Is the gateway running?');
+            const msg = 'Could not connect to gateway. Is the gateway running?';
+            setError(msg);
+            toast.error(msg);
         } finally {
             setCreating(false);
         }
     };
 
     if (status === 'loading' || hasKey === null) {
-        return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>Loading…</div>;
+        return <ApiKeysSkeleton />;
     }
 
     return (
@@ -92,8 +141,9 @@ export default function ApiKeys() {
             </div>
 
             {error && (
-                <div style={{ background: '#FEE2E2', border: '1px solid #FECACA', borderRadius: '12px', padding: '14px 20px', marginBottom: '24px', color: '#991B1B', fontSize: '14px', display: 'flex', gap: '8px' }}>
-                    ⚠️ {error}
+                <div className="alert alert-error" style={{ marginBottom: '24px' }}>
+                    <span style={{ fontSize: '18px' }}>⚠️</span>
+                    <div>{error}</div>
                 </div>
             )}
 
@@ -101,8 +151,8 @@ export default function ApiKeys() {
             {key ? (
                 <div className="glass-card animate-fade-2" style={{ padding: '32px', marginBottom: '28px' }}>
                     {key.createdNow && (
-                        <div style={{ background: '#D1FAE5', border: '1px solid #6EE7B7', borderRadius: '12px', padding: '14px 20px', marginBottom: '24px', color: '#065F46', fontSize: '14px', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                            <span style={{ fontSize: '18px' }}>🎉</span>
+                        <div className="alert alert-success" style={{ marginBottom: '24px' }}>
+                            <span style={{ fontSize: '20px' }}>🎉</span>
                             <div>
                                 <strong>Key created!</strong> Copy it now — it will <strong>never be shown again</strong>.
                             </div>
@@ -124,7 +174,7 @@ export default function ApiKeys() {
                                 <td style={{ fontWeight: '600' }}>My Gateway Key</td>
                                 <td>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <code style={{ background: key.createdNow ? '#F0FDF4' : '#F8FAFC', padding: '6px 12px', borderRadius: '8px', fontSize: '13px', color: key.createdNow ? '#065F46' : 'var(--text-muted)', letterSpacing: '0.5px', border: '1px solid ' + (key.createdNow ? '#6EE7B7' : 'var(--border)'), maxWidth: '340px', overflowX: 'auto', display: 'block' }}>
+                                        <code style={{ background: 'var(--bg-soft)', padding: '6px 12px', borderRadius: '8px', fontSize: '13px', color: key.createdNow ? 'var(--primary)' : 'var(--text-muted)', letterSpacing: '0.5px', border: '1px solid var(--border)', maxWidth: '340px', overflowX: 'auto', display: 'block', fontWeight: key.createdNow ? '700' : 'normal' }}>
                                             {key.createdNow ? key.plainKey : `${key.keyPrefix}••••••••••••••••••••`}
                                         </code>
                                         {key.createdNow && <CopyBtn text={key.plainKey} />}
