@@ -92,21 +92,42 @@ export default function ApiKeys() {
     const [error, setError] = useState('');
     const [hasKey, setHasKey] = useState<boolean | null>(null); // null = loading
 
-    // On mount, check if user already has a key via stats endpoint
     useEffect(() => {
         if (status !== 'authenticated') return;
-        fetch('/api/gateway/stats')
-            .then(r => {
-                if (r.status === 404) { setHasKey(false); return null; }
-                if (r.ok) { setHasKey(true); return r.json(); }
-                return null;
-            })
-            .then(data => {
-                if (data) {
+
+        const loadOrCreate = async () => {
+            try {
+                const r = await fetch('/api/gateway/stats');
+                if (r.ok) {
+                    const data = await r.json();
                     setKey({ plainKey: data.plainKey || '', keyPrefix: data.keyPrefix, tier: data.tier, email: data.email || '', createdNow: false });
+                    setHasKey(true);
+                    return;
                 }
-            })
-            .catch(() => setHasKey(false));
+
+                if (r.status === 404) {
+                    setCreating(true);
+                    const createRes = await fetch('/api/gateway/keys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
+                    const data = await createRes.json();
+                    if (createRes.ok) {
+                        setKey({ plainKey: data.key, keyPrefix: data.key.substring(0, 20), tier: data.tier, email: data.email || user?.email || '', createdNow: true });
+                        setHasKey(true);
+                        toast.success('Your API Key has been generated automatically!');
+                    } else {
+                        setError(data.error || 'Failed to create key');
+                        setHasKey(false);
+                    }
+                    setCreating(false);
+                    return;
+                }
+
+                setHasKey(false);
+            } catch {
+                setHasKey(false);
+            }
+        };
+
+        loadOrCreate();
     }, [status]);
 
     const handleCreate = async () => {
@@ -133,7 +154,7 @@ export default function ApiKeys() {
         }
     };
 
-    if (status === 'loading' || hasKey === null) {
+    if (status === 'loading' || hasKey === null || (creating && !key)) {
         return <ApiKeysSkeleton />;
     }
 
@@ -148,9 +169,9 @@ export default function ApiKeys() {
                             Each account is limited to <strong style={{ color: 'var(--text-main)' }}>one key</strong>. Treat it like a password — it won&apos;t be shown again.
                         </p>
                     </div>
-                    {!hasKey && (
+                    {!hasKey && !creating && (
                         <button className="btn-primary" style={{ padding: '10px 22px', fontSize: '14px' }} onClick={handleCreate} disabled={creating}>
-                            {creating ? 'Creating...' : 'Generate key'}
+                            Retry
                         </button>
                     )}
                 </div>
@@ -210,13 +231,17 @@ export default function ApiKeys() {
             ) : (
                 <div className="glass-card animate-fade-2" style={{ padding: '48px', textAlign: 'center', marginBottom: '28px' }}>
                     <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}><Key size={40} color="var(--text-muted)" strokeWidth={1.5} /></div>
-                    <h3 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '8px' }}>No API Key Yet</h3>
+                    <h3 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '8px' }}>
+                        {creating ? 'Generating your key…' : 'Something went wrong'}
+                    </h3>
                     <p style={{ color: 'var(--text-muted)', fontSize: '14px', maxWidth: '400px', margin: '0 auto 28px', lineHeight: '1.6' }}>
-                        Generate your free key to start calling the Frenix AI Gateway. One key per account.
+                        {creating ? 'Hang tight — we\'re setting up your free API key.' : 'Could not create your key automatically. Click retry or check if the gateway is running.'}
                     </p>
-                    <button className="btn-primary" style={{ margin: '0 auto', padding: '12px 36px', fontSize: '15px' }} onClick={handleCreate} disabled={creating}>
-                        {creating ? 'Creating...' : 'Generate free key'}
-                    </button>
+                    {!creating && (
+                        <button className="btn-primary" style={{ margin: '0 auto', padding: '12px 36px', fontSize: '15px' }} onClick={handleCreate}>
+                            Retry
+                        </button>
+                    )}
                 </div>
             )}
 

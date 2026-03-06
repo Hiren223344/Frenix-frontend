@@ -4,6 +4,7 @@
  */
 
 const BASE = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:4000';
+const SERVICE_KEY = process.env.GATEWAY_SERVICE_KEY || '';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -65,6 +66,7 @@ export async function fetchStats(apiKey: string): Promise<GatewayStats> {
 
 export async function fetchStatsByEmail(email: string): Promise<GatewayStats> {
     const res = await fetch(`${BASE}/v1/keys/email/${encodeURIComponent(email)}`, {
+        headers: SERVICE_KEY ? { Authorization: `Bearer ${SERVICE_KEY}` } : {},
         cache: 'no-store',
     });
 
