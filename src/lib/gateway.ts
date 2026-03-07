@@ -12,6 +12,7 @@ export interface GatewayStats {
     email: string | null;
     tier: string;
     keyPrefix: string;
+    fullKey?: string;
     plainKey?: string;
     status: string;
     createdAt: string;

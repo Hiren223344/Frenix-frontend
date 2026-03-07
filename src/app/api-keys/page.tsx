@@ -128,7 +128,7 @@ export default function ApiKeys() {
                     setHasKey(true);
                     return;
                 }
-            } catch {}
+            } catch { }
 
             await autoCreate();
         };
@@ -206,10 +206,10 @@ export default function ApiKeys() {
                         <thead>
                             <tr>
                                 <th>Label</th>
-                                <th>Token</th>
+                                <th>Token Identifier</th>
                                 <th>Tier</th>
                                 <th>Account</th>
-                                {key.createdNow && <th>Action</th>}
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -217,19 +217,16 @@ export default function ApiKeys() {
                                 <td style={{ fontWeight: '600' }}>My Gateway Key</td>
                                 <td>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <code style={{ background: 'var(--bg-soft)', padding: '6px 12px', borderRadius: '8px', fontSize: '13px', color: 'var(--text-main)', fontFamily: 'ui-monospace, monospace', letterSpacing: '0.3px', border: '1px solid var(--border)', maxWidth: '340px', overflowX: 'auto', display: 'block', fontWeight: key.plainKey ? '600' : 'normal' }}>
+                                        <code style={{ background: 'var(--bg-soft)', padding: '6px 12px', borderRadius: '8px', fontSize: '13px', color: 'var(--text-main)', fontFamily: 'ui-monospace, monospace', letterSpacing: '0.3px', border: '1px solid var(--border)', maxWidth: '340px', overflowX: 'auto', display: 'block', fontWeight: 'bold' }}>
                                             {key.plainKey ? key.plainKey : `${key.keyPrefix}••••••••••••••••••••`}
                                         </code>
-                                        {key.plainKey && <CopyBtn text={key.plainKey} />}
                                     </div>
                                 </td>
                                 <td><span className={`badge ${key.tier === 'pro' ? 'badge-warning' : 'badge-success'}`}>{key.tier}</span></td>
                                 <td style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{key.email}</td>
-                                {key.createdNow && (
-                                    <td>
-                                        <CopyBtn text={key.plainKey} />
-                                    </td>
-                                )}
+                                <td>
+                                    <CopyBtn text={key.plainKey || key.keyPrefix} />
+                                </td>
                             </tr>
                         </tbody>
                     </table>
