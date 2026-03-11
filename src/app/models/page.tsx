@@ -19,7 +19,6 @@ interface Model {
     object: string;
     created: number;
     owned_by: string;
-    is_pro?: boolean;
 }
 
 interface Pricing {
