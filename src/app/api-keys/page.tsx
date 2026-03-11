@@ -12,6 +12,7 @@ interface StoredKey {
     keyPrefix: string;
     tier: string;
     email: string;
+    status?: string;
     createdNow: boolean;
 }
 
@@ -101,12 +102,12 @@ export default function ApiKeys() {
                 const createRes = await fetch('/api/gateway/keys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
                 const data = await createRes.json();
                 if (createRes.ok) {
-                    setKey({ plainKey: data.key, keyPrefix: data.key.substring(0, 20), tier: data.tier, email: data.email || user?.email || '', createdNow: true });
+                    setKey({ plainKey: data.key, keyPrefix: data.key.substring(0, 20), tier: data.tier, email: data.email || user?.email || '', status: data.status || 'active', createdNow: true });
                     setHasKey(true);
                     toast.success('Your API Key has been generated automatically!');
                 } else if (createRes.status === 409) {
                     setHasKey(true);
-                    setKey({ plainKey: '', keyPrefix: data.keyPrefix || '', tier: data.tier || 'free', email: data.email || user?.email || '', createdNow: false });
+                    setKey({ plainKey: '', keyPrefix: data.keyPrefix || '', tier: data.tier || 'free', email: data.email || user?.email || '', status: data.status || 'active', createdNow: false });
                 } else {
                     setError(data.error || 'Failed to create key');
                     setHasKey(false);
@@ -124,7 +125,7 @@ export default function ApiKeys() {
                 const r = await fetch('/api/gateway/stats');
                 if (r.ok) {
                     const data = await r.json();
-                    setKey({ plainKey: data.plainKey || '', keyPrefix: data.keyPrefix, tier: data.tier, email: data.email || '', createdNow: false });
+                    setKey({ plainKey: data.plainKey || '', keyPrefix: data.keyPrefix, tier: data.tier, email: data.email || '', status: data.status || 'active', createdNow: false });
                     setHasKey(true);
                     return;
                 }
@@ -148,7 +149,7 @@ export default function ApiKeys() {
                 toast.error(msg);
                 return;
             }
-            setKey({ plainKey: data.key, keyPrefix: data.key.substring(0, 20), tier: data.tier, email: data.email || user?.email || '', createdNow: true });
+            setKey({ plainKey: data.key, keyPrefix: data.key.substring(0, 20), tier: data.tier, email: data.email || user?.email || '', status: data.status || 'active', createdNow: true });
             setHasKey(true);
             toast.success('Your API Key has been generated successfully!');
         } catch {
@@ -208,6 +209,7 @@ export default function ApiKeys() {
                                 <th>Label</th>
                                 <th>Token Identifier</th>
                                 <th>Tier</th>
+                                <th>Status</th>
                                 <th>Account</th>
                                 <th>Action</th>
                             </tr>
@@ -223,6 +225,11 @@ export default function ApiKeys() {
                                     </div>
                                 </td>
                                 <td><span className={`badge ${key.tier === 'pro' ? 'badge-warning' : 'badge-success'}`}>{key.tier}</span></td>
+                                <td>
+                                    <span className={`badge ${key.status === 'active' ? 'badge-success' : 'badge-error'}`} style={{ textTransform: 'capitalize' }}>
+                                        {key.status || 'Active'}
+                                    </span>
+                                </td>
                                 <td style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{key.email}</td>
                                 <td>
                                     <CopyBtn text={key.plainKey || key.keyPrefix} />

@@ -200,7 +200,11 @@ export default function Dashboard() {
             <div className="flex justify-between items-end border-b border-white/5 pb-8">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight mb-1">Gateway</h1>
-                    <p className="text-sm text-muted-foreground">Monitoring node: <span className="text-foreground">Active</span></p>
+                    <p className="text-sm text-muted-foreground">
+                        Monitoring node: <span className={cn("capitalize font-semibold", stats.status === 'active' ? "text-emerald-500" : "text-rose-500")}>
+                            {stats.status || 'Unknown'}
+                        </span>
+                    </p>
                 </div>
                 <div className="flex items-center gap-3">
                     <Link href="/billing" className="p-2.5 rounded-xl bg-white/5 border border-white/5 text-muted-foreground hover:text-foreground transition-colors">

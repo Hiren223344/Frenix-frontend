@@ -12,12 +12,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface Model {
     id: string;
     object: string;
     created: number;
     owned_by: string;
+    is_pro?: boolean;
 }
 
 interface Pricing {
@@ -295,12 +297,20 @@ export default function ModelsPage() {
                                             initial={{ opacity: 0 }}
                                             animate={{ opacity: 1 }}
                                             key={model.id}
-                                            className="group py-4 border-b border-[#111] hover:bg-[#050505] transition-colors cursor-pointer"
+                                            className={cn(
+                                                "group py-4 border-b border-[#111] hover:bg-[#050505] transition-colors cursor-pointer relative",
+                                                model.is_pro && "border-l-2 border-l-primary/40 pl-5 -ml-[2px] bg-primary/[0.01]"
+                                            )}
                                         >
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center gap-2 overflow-hidden">
-                                                    <h3 className="text-[15px] font-bold text-white group-hover:text-primary transition-colors truncate">
-                                                        {model.owned_by}: {model.id.split('/').pop()}
+                                                    <h3 className="flex items-center gap-2 text-[15px] font-bold text-white group-hover:text-primary transition-colors truncate">
+                                                        <span>{model.owned_by}: {model.id.split('/').pop()}</span>
+                                                        {model.is_pro && (
+                                                            <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded border border-primary/20 uppercase tracking-widest font-black shrink-0">
+                                                                PRO
+                                                            </span>
+                                                        )}
                                                     </h3>
                                                     <div className="w-4 h-4 rounded-full bg-[#111] border border-[#222] flex items-center justify-center">
                                                         <Info size={10} className="text-zinc-600" />
