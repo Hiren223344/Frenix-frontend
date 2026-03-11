@@ -286,7 +286,7 @@ export default function ModelsPage() {
                                 ))
                             ) : displayedModels.length === 0 ? (
                                 <div className="py-20 text-center">
-                                    <p className="text-zinc-500">No models found for "{search}"</p>
+                                    <p className="text-zinc-500">No models found</p>
                                 </div>
                             ) : (
                                 displayedModels.map((model) => {
@@ -297,20 +297,12 @@ export default function ModelsPage() {
                                             initial={{ opacity: 0 }}
                                             animate={{ opacity: 1 }}
                                             key={model.id}
-                                            className={cn(
-                                                "group py-4 border-b border-[#111] hover:bg-[#050505] transition-colors cursor-pointer relative",
-                                                model.is_pro && "border-l-2 border-l-primary/40 pl-5 -ml-[2px] bg-primary/[0.01]"
-                                            )}
+                                            className="group py-4 border-b border-[#111] hover:bg-[#050505] transition-colors cursor-pointer relative"
                                         >
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center gap-2 overflow-hidden">
                                                     <h3 className="flex items-center gap-2 text-[15px] font-bold text-white group-hover:text-primary transition-colors truncate">
                                                         <span>{model.owned_by}: {model.id.split('/').pop()}</span>
-                                                        {model.is_pro && (
-                                                            <span className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded border border-primary/20 uppercase tracking-widest font-black shrink-0">
-                                                                PRO
-                                                            </span>
-                                                        )}
                                                     </h3>
                                                     <div className="w-4 h-4 rounded-full bg-[#111] border border-[#222] flex items-center justify-center">
                                                         <Info size={10} className="text-zinc-600" />
