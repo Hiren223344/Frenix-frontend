@@ -210,8 +210,6 @@ export default function AccountPage() {
                     <User size={16} />
                     Profile
                 </button>
-                {/* OAuth Disabled Temporarily */}
-                {/* 
                 <button
                     onClick={() => setActiveTab('developer')}
                     className={activeTab === 'developer' ? 'tab-active' : 'tab-inactive'}
@@ -231,7 +229,6 @@ export default function AccountPage() {
                     <Code2 size={16} />
                     Developer
                 </button>
-                */}
             </div>
 
             {activeTab === 'profile' ? (

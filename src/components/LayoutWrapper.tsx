@@ -11,6 +11,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
     const router = useRouter();
     const isLanding = pathname === '/';
     const isAuth = pathname.startsWith('/api/auth') || pathname === '/signin' || pathname === '/oauth/consent';
+    const isRestrictedPath = pathname.startsWith('/admin') || pathname.startsWith('/team');
 
     const [user, setUser] = useState<any>(null);
     const [status, setStatus] = useState<'loading' | 'authenticated' | 'unauthenticated'>('loading');
@@ -39,7 +40,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
         router.push('/');
     };
 
-    if (isAuth) return <>{children}</>;
+    if (isAuth || isRestrictedPath) return <>{children}</>;
 
     const navLinks = [
         { label: 'Dashboard', href: '/dashboard' },
@@ -106,7 +107,8 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                             <span style={{ fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>Support</span>
-                            <Link href="/terms" className="hover-text-primary">Terms of service</Link>
+                             <Link href="/about" className="hover-text-primary">About Us</Link>
+                             <Link href="/terms" className="hover-text-primary">Terms of service</Link>
                             <Link href="/privacy" className="hover-text-primary">Privacy policy</Link>
                             <Link href="/refund" className="hover-text-primary">Refund policy</Link>
                             <Link href="/status" className="hover-text-primary">Status</Link>

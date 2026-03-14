@@ -102,3 +102,58 @@ export async function createGatewayKey(params: {
 
     return body;
 }
+
+// ─── Admin Functions ─────────────────────────────────────────────────────────
+
+export async function adminFetchUsers(creds: { username: string; password: string }) {
+    const auth = btoa(`${creds.username}:${creds.password}`);
+    const res = await fetch(`${BASE}/v1/admin/users`, {
+        headers: { Authorization: `Basic ${auth}` },
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.message || `HTTP ${res.status}`);
+    }
+
+    return res.json();
+}
+
+export async function adminUpgradeUser(creds: { username: string; password: string }, userId: string, tier: string) {
+    const auth = btoa(`${creds.username}:${creds.password}`);
+    const res = await fetch(`${BASE}/v1/admin/upgrade`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${auth}`
+        },
+        body: JSON.stringify({ userId, tier }),
+    });
+
+    if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.message || `HTTP ${res.status}`);
+    }
+
+    return res.json();
+}
+
+export async function adminUpdateUserStatus(creds: { username: string; password: string }, userId: string, status: string) {
+    const auth = btoa(`${creds.username}:${creds.password}`);
+    const res = await fetch(`${BASE}/v1/admin/status`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Basic ${auth}`
+        },
+        body: JSON.stringify({ userId, status }),
+    });
+
+    if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.message || `HTTP ${res.status}`);
+    }
+
+    return res.json();
+}

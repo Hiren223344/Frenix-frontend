@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ApiKey {
+  id               String    @id @default(cuid())
+  keyHash          String    @unique
+  keyPrefix        String
+  fullKey          String?
+  email            String?   @unique
+  @@index([email])
+  tier             String
+  tierExpiresAt    DateTime?
+  status           String    @default("active")
+  createdAt        DateTime  @default(now())
+  lastUsedAt       DateTime?
+  totalRequests    Int       @default(0)
+  successRequests  Int       @default(0)
+  failedRequests   Int       @default(0)
+  promptTokens     Int       @default(0)
+  completionTokens Int       @default(0)
+  totalTokens      Int       @default(0)
+  imageGenerations Int       @default(0)
+  imageEdits       Int       @default(0)
+  imageVariations  Int       @default(0)
+  audioSpeeches    Int       @default(0)
+  transcriptions   Int       @default(0)
+  translations     Int       @default(0)
+  embeddings       Int       @default(0)
+  moderations      Int       @default(0)
+  videoGenerations Int       @default(0)
+  totalCostUsd     Float     @default(0)
+  modelsUsed       Json      @default("{}")
+  providersUsed    Json      @default("{}")
+  endpointsUsed    Json      @default("{}")
+  lastName         String?
+  name             String?
+  telegramId       String?   @unique
+  username         String?
+  requests         Request[]
+}
+
+model Request {
+  id               String   @id @default(cuid())
+  apiKeyId         String
+  endpoint         String
+  provider         String
+  requestedModel   String
+  routedModel      String
+  promptTokens     Int      @default(0)
+  completionTokens Int      @default(0)
+  totalTokens      Int      @default(0)
+  costUsd          Float    @default(0)
+  status           String
+  createdAt        DateTime @default(now())
+  apiKey           ApiKey   @relation(fields: [apiKeyId], references: [id])
+
+  @@index([apiKeyId, createdAt])
+  @@index([createdAt])
+}
+model VideoCache {
+  id        String   @id @default(cuid())
+  data      Bytes
+  mimeType  String   @default("video/mp4")
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model OAuthApp {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  clientId      String   @unique @map("client_id")
+  clientSecret  String?  @map("client_secret")
+  name          String
+  logoUrl       String?  @map("logo_url")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("oauth_apps")
+}

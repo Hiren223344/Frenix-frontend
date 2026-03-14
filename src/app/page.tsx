@@ -241,25 +241,25 @@ export default function Home() {
       <RevealSection>
         <section className="max-w-[1200px] mx-auto mb-24 px-6">
           <div className="mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-3 text-foreground">
-              Built for developers
+            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3 text-foreground">
+              Why use an AI Gateway for your LLM infrastructure?
             </h2>
-            <p className="text-muted-foreground text-base md:text-lg max-w-md leading-relaxed">
-              Everything you need to integrate AI, without the infrastructure overhead.
+            <p className="text-muted-foreground text-base md:text-lg max-w-2xl leading-relaxed">
+              Managing multiple API keys, provider SDKs, and error handling for 150+ models is a massive technical debt. Frenix unifies this into a single, high-performance orchestration layer.
             </p>
           </div>
 
           <div className="feature-grid grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="p-8 md:p-12 lg:p-14 bg-white/[0.02] border border-white/5 rounded-3xl flex flex-col justify-between min-h-[400px]">
+            <div className="p-8 md:p-12 lg:p-14 bg-white/[0.02] border border-white/5 rounded-3xl flex flex-col justify-between min-h-[450px]">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-8">
                   <Zap size={22} className="text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold mb-4 text-foreground tracking-tight">
-                  Dynamic routing
+                  How does dynamic routing work?
                 </h3>
-                <p className="text-muted-foreground text-sm md:text-base leading-relaxed max-w-sm mb-10">
-                  Route traffic across OpenAI, Anthropic, Gemini, and local LLMs from a single endpoint. Automatic failover and latency-aware selection.
+                <p className="text-muted-foreground text-sm md:text-base leading-relaxed max-w-md mb-10">
+                  Frenix uses a latency-aware load balancer that continuously pings upstream providers. When you request a model like <span className="text-primary font-bold">gpt-4o</span>, we route it to the fastest available region, providing sub-40ms overhead while ensuring 99.9% availability.
                 </p>
               </div>
 
@@ -328,7 +328,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Free */}
             <div className="p-8 md:p-12 bg-white/[0.02] border border-white/5 rounded-3xl flex flex-col">
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-6 px-3 py-1 bg-white/5 rounded-md self-start">Free</span>
@@ -355,18 +355,43 @@ export default function Home() {
             </div>
 
             {/* Pro */}
-            <div className="p-8 md:p-12 bg-white rounded-3xl flex flex-col relative overflow-hidden group">
-              <div className="absolute top-8 right-8 text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 bg-black/5 rounded-md text-black/60">Recommended</div>
-
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40 mb-6">Developer Pro</span>
+            <div className="p-8 md:p-12 bg-white/[0.03] border border-white/10 rounded-3xl flex flex-col relative overflow-hidden group">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-6 px-3 py-1 bg-white/5 rounded-md self-start">Developer Pro</span>
               <div className="flex items-baseline gap-2 mb-4">
-                <span className="text-4xl md:text-5xl font-extrabold tracking-tighter text-black">$<CountUp to={10} duration={2} /></span>
+                <span className="text-4xl md:text-5xl font-extrabold tracking-tighter text-white font-black">$<CountUp to={10} duration={2} /></span>
+                <span className="text-muted-foreground text-sm font-medium">/mo</span>
+              </div>
+              <p className="text-muted-foreground/60 text-sm md:text-base mb-10 leading-relaxed">For scaling apps and professional developers.</p>
+
+              <div className="flex-1 space-y-4 mb-12">
+                {["20 requests/minute", "Unlimited keys", "Priority latency", "Privacy-first logs", "Dedicated support"].map((f, fi) => (
+                  <div key={fi} className="flex items-center gap-3 text-sm font-medium text-foreground opacity-90">
+                    <div className="size-5 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0">
+                      <Check size={12} className="text-emerald-500" />
+                    </div>
+                    <span>{f}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Link href="/signin" className="w-full h-14 rounded-2xl bg-primary text-black flex items-center justify-center font-bold text-sm tracking-widest uppercase hover:opacity-90 transition-all">
+                Upgrade Now
+              </Link>
+            </div>
+
+            {/* Team */}
+            <div className="p-8 md:p-12 bg-white rounded-[40px] flex flex-col relative overflow-hidden group border-[6px] border-primary/20">
+               <div className="absolute top-8 right-8 text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 bg-black/5 rounded-md text-black/60">High Value</div>
+
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40 mb-6">Team Bot</span>
+              <div className="flex items-baseline gap-2 mb-4">
+                <span className="text-4xl md:text-5xl font-extrabold tracking-tighter text-black">$<CountUp to={49} duration={2} /></span>
                 <span className="text-black/40 text-sm font-medium">/mo</span>
               </div>
-              <p className="text-black/60 text-sm md:text-base mb-10 leading-relaxed">For scaling apps and professional teams.</p>
+              <p className="text-black/60 text-sm md:text-base mb-10 leading-relaxed">Built for AI agents and automated workflows requiring high-performance model orchestration.</p>
 
               <div className="flex-1 space-y-4 mb-12 relative">
-                {["20 requests/minute", "Unlimited keys", "Priority latency", "Privacy-first logs", "Dedicated support"].map((f, fi) => (
+                {["All Models Access*", "Shared Workspace", "Team Identity Logs", "XOR Payload Security", "24/7 Priority Channel"].map((f, fi) => (
                   <div key={fi} className="flex items-center gap-3 text-sm font-bold text-black/80">
                     <div className="size-5 rounded-full bg-black/5 flex items-center justify-center shrink-0">
                       <Check size={12} className="text-black" />
@@ -374,10 +399,11 @@ export default function Home() {
                     <span>{f}</span>
                   </div>
                 ))}
+                <p className="text-[9px] text-black/30 font-bold italic mt-2 uppercase tracking-tight">*Excludes Opus & Gemini 3.1 Pro</p>
               </div>
 
               <Link href="/signin" className="w-full h-14 rounded-2xl bg-black text-white flex items-center justify-center font-bold text-sm tracking-widest uppercase hover:bg-black/90 transition-all">
-                Upgrade Now
+                Join Team
               </Link>
             </div>
           </div>
@@ -395,8 +421,45 @@ export default function Home() {
             </Link>
           </div>
           <p style={{ textAlign: 'center', marginTop: '32px', color: 'var(--text-muted)', fontSize: '12px' }}>
-            Prices in USD. By subscribing you agree to our <Link href="/terms" style={{ textDecoration: 'underline', textUnderlineOffset: '2px' }}>Terms</Link> and <Link href="/refund" style={{ textDecoration: 'underline', textUnderlineOffset: '2px' }}>Refund Policy</Link>.
+            Prices in USD. By subscribing you agree to our <Link href="/about" style={{ textDecoration: 'underline', textUnderlineOffset: '2px' }}>About Us</Link>, <Link href="/terms" style={{ textDecoration: 'underline', textUnderlineOffset: '2px' }}>Terms</Link> and <Link href="/refund" style={{ textDecoration: 'underline', textUnderlineOffset: '2px' }}>Refund Policy</Link>.
           </p>
+        </section>
+      </RevealSection>
+
+      {/* ── Conversational FAQ (AI Search Optimization) ──────────────── */}
+      <RevealSection>
+        <section className="max-w-[1200px] mx-auto mb-24 px-6 py-16 border-t border-white/5">
+          <div className="mb-14 text-center">
+            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-widest text-foreground/80 mb-4 italic">Common Questions</h2>
+            <p className="text-muted-foreground/60 text-sm font-medium">Everything you need to know about the Frenix V2 Infrastructure.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="space-y-4">
+                <h3 className="text-lg font-bold text-foreground">Can I use Frenix as a backup for OpenAI?</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                   Absolutely. Many of our users use Frenix as their primary endpoint with OpenAI as the default model. If OpenAI experiences a regional outage, our gateway can automatically failover to a comparable model (like Claude 3.5 Sonnet or Gemini 1.5 Pro) without you needing to update a single line of code.
+                </p>
+            </div>
+            <div className="space-y-4">
+                <h3 className="text-lg font-bold text-foreground">What is the security protocol for my payload?</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                   Frenix implements a zero-retention policy for your data. Your requests are proxied directly to the upstream providers via an encrypted TLS tunnel. We only store anonymized metadata (tokens used, latency, and status) to provide you with comprehensive observability and billing.
+                </p>
+            </div>
+            <div className="space-y-4">
+                <h3 className="text-lg font-bold text-foreground">Are there any hidden costs?</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                   No. We pass through the raw provider costs directly. Our revenue comes from our tiered subscription model for features like priority latency and advanced analytics, not by marking up your token consumption.
+                </p>
+            </div>
+            <div className="space-y-4">
+                <h3 className="text-lg font-bold text-foreground">How do I integrate Frenix into my existing app?</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                   Integration takes less than 30 seconds. In your OpenAI client library, simply replace the `baseURL` with `https://api.frenix.sh/v1` and use your Frenix API key. Everything else — from chat parameters to response streaming — remains identical.
+                </p>
+            </div>
+          </div>
         </section>
       </RevealSection>
 
@@ -411,6 +474,14 @@ export default function Home() {
               <p className="!text-black/60 text-sm md:text-lg font-medium leading-relaxed max-w-md">
                 Stop managing multiple provider SDKs. Swap your base URL to Frenix and get access to every model from a single key.
               </p>
+              
+              <div className="mt-8 flex items-center gap-4 border-t border-black/5 pt-8">
+                 <div className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center font-black text-[10px] text-black/40">FT</div>
+                 <div className="flex flex-col text-left">
+                    <span className="text-[11px] font-black uppercase tracking-widest leading-none">Frenix Engineering</span>
+                    <span className="text-[10px] font-bold text-black/40 uppercase mt-1">Infrastructure Authority</span>
+                 </div>
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto relative z-10">

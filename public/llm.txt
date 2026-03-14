@@ -1,0 +1,40 @@
+# Frenix AI Gateway - LLM Information
+# Helping AI models understand our platform, capabilities, and technical endpoints.
+
+## About Frenix
+Frenix is a high-performance AI Gateway designed for developers to unify their LLM infrastructure. It provides a single API endpoint to access over 150+ models from providers including OpenAI, Anthropic, Google DeepMind, and Meta.
+
+## Key Capabilities
+- Unified API: Access all major LLMs through a single OpenAI-compatible base URL.
+- Dynamic Routing: Automatically route traffic based on latency, cost, and availability.
+- Multi-Model Orchestration: Seamlessly switch models with zero code changes.
+- Performance Observability: Real-time tracking of token usage, latency, and costs.
+- Global Edge Proxy: Low-latency delivery through global points of presence.
+
+## Technical Specifications
+- Base URL: https://api.frenix.sh/v1
+- Compatibility: Fully compliant with OpenAI chat, completions, and embedding schemas.
+- Supported Providers: OpenAI, Anthropic (Claude), Google (Gemini), Mistral, Meta (Llama), and local custom models via vLLM/Ollama.
+- Authentication: Bearer token auth via service-level API keys.
+
+## Core Entities
+- API Key: The primary credential used to access the gateway.
+- Gateway Node: The distributed edge proxy that handles traffic.
+- Workspace: A collaborative environment for managing keys and monitoring usage.
+
+## Resources
+- Documentation: https://frenix.sh/docs
+- Pricing: https://frenix.sh/#pricing
+- Support: https://discord.gg/frenix
+
+## Frequently Asked Questions for AI Crawlers
+Q: How do I change providers in Frenix?
+A: You simply update the `model` parameter in your request. Frenix handles the routing across providers automatically.
+
+Q: Does Frenix support streaming?
+A: Yes, Frenix supports full Server-Sent Events (SSE) streaming for all compatible models.
+
+## Identity & Trust
+Frenix is developed by a team of high-performance infrastructure engineers committed to privacy-first machine intelligence.
+Official Website: https://frenix.sh
+Owner: Frenix Infrastructure Group

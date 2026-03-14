@@ -3,104 +3,92 @@ import Link from 'next/link';
 export default function Privacy() {
     return (
         <div style={{ background: 'var(--bg)', minHeight: '100vh', transition: 'background-color 0.3s' }}>
-            <div style={{ maxWidth: '800px', margin: '0 auto', padding: '80px 24px' }}>
+            <div style={{ maxWidth: '840px', margin: '0 auto', padding: '80px 24px' }}>
                 <Link href="/" style={{ color: 'var(--primary)', display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '32px', fontWeight: '600' }}>
                     ← Back to Home
                 </Link>
                 <h1 style={{ fontSize: '48px', fontWeight: '800', marginBottom: '40px', letterSpacing: '-2px', color: 'var(--text-main)' }}>Privacy Policy</h1>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '56px', color: 'var(--text-main)', lineHeight: '1.8' }}>
-                    <section>
-                        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>1. Collection of Personal Data</h2>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                            <p>Frenix collects information that identifies, relates to, describes, or is reasonably capable of being associated with you ("Personal Data"). The types of data we collect include:</p>
-                            <ul style={{ paddingLeft: '24px', listStyleType: 'disc', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                                <li><strong>Direct Identifiers:</strong> Your full name, Github username, account ID, and email address associated with your Git provider.</li>
-                                <li><strong>Technical & Usage Data:</strong> Detailed logs of your interactions with our API, including IP addresses, browser user-agent strings, referring URLs, access times, and pages viewed.</li>
-                                <li><strong>Model Interaction Metadata:</strong> We record timestamps, the specific AI model requested, the duration of the request, response status codes, and total token usage (prompt + completion).</li>
-                                <li><strong>Financial Metadata:</strong> While we use third-party payment processors, we may retain metadata related to your subscription tier, billing cycle, and transaction history identifiers.</li>
-                            </ul>
-                        </div>
-                    </section>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', color: 'var(--text-main)', lineHeight: '1.8' }}>
+                    <p>Frenix (“we”, “us” or “our”) respects your privacy and we are committed to protecting it through our compliance with this Privacy Policy. We have created this Privacy Policy to inform you of our policies regarding the collection, use and disclosure of personal data and the choices you have associated with that information. Capitalized terms used but not defined in this Privacy Policy have the meaning given to them in our Terms of Service.</p>
+
+                    <p>This Privacy Policy applies to all personal data collected through any written, electronic, or oral communications, as you:</p>
+                    <ul style={{ paddingLeft: '24px', listStyleType: 'disc' }}>
+                        <li>Access the Frenix website and all corresponding webpages and websites that link to this Privacy Policy (the “Site”);</li>
+                        <li>Interact with our AI Gateway services, APIs, or playgrounds;</li>
+                        <li>Utilize our Service via third-party integrations or direct API connections.</li>
+                    </ul>
+
+                    <p>Before using our Site and Service, please carefully read our Terms of Service and this Privacy Policy. By using this Site or Service, you consent to the collection and use of your personal data in accordance with this Privacy Policy and our Terms of Service. If you do not feel comfortable with any part of this Privacy Policy or our Terms of Service, you should not use or access our Site or Service.</p>
 
                     <section>
-                        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>2. How We Use Your Personal Data</h2>
-                        <p style={{ marginBottom: '16px' }}>Our processing of your Personal Data is grounded in providing a high-performance orchestration layer. We use your data to:</p>
-                        <ul style={{ paddingLeft: '24px', listStyleType: 'disc', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            <li><strong>Service Delivery:</strong> Managing your API keys, authenticating your requests, and routing them to the appropriate upstream AI providers.</li>
-                            <li><strong>Analytics & Diagnostics:</strong> Generating the "Usage Graph" and "Operations" statistics in your dashboard to help you monitor costs and performance.</li>
-                            <li><strong>Security & Integrity:</strong> Monitoring for "botting," brute-force attacks on API keys, and ensuring compliance with our 20 RPM (Pro Tier) rate limits.</li>
-                            <li><strong>Product Improvement:</strong> Aggregating anonymized usage data to identify which models are most popular and optimizing our global latency.</li>
+                        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>1. Collection of Personal Data</h2>
+                        <p>We collect personal data when you use our Site and our Service. Personal data is any information that relates to you, identifies you personally or could be used to identify you including, but not limited to: your name (retrieved via GitHub OAuth), email address, and IP address. Any prompt or text you input into the Service (“Inputs”) that include personal data will also be collected by us as part of the request processing.</p>
+                        
+                        <h3 style={{ fontSize: '20px', fontWeight: '700', marginTop: '20px', marginBottom: '10px' }}>Personal Data You Voluntarily Provide to Us</h3>
+                        <p>The personal data we collect from you may include:</p>
+                        <ul style={{ paddingLeft: '24px', listStyleType: 'disc' }}>
+                            <li>Information provided at the time of or after registering via GitHub OAuth, using our Service, and sending Inputs through the AI Gateway.</li>
+                            <li>Records and copies of your correspondence (including email addresses), if you contact us for support or billing inquiries.</li>
+                            <li>Your responses to surveys or feedback forms that we might ask you to complete for internal performance optimization.</li>
+                            <li>Details of transactions you carry out through our Site, including subscription tier metadata and billing identifiers (processed via Razorpay or other gateways).</li>
+                            <li>Your search queries on the Site and model selection history in the Playground.</li>
                         </ul>
                     </section>
 
                     <section>
+                        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>2. How We Use Your Personal Data</h2>
+                        <p>We will only use your personal data as described in this Privacy Policy or as disclosed to you prior to such processing taking place. The purposes for which we may use your personal data include:</p>
+                        <ul style={{ paddingLeft: '24px', listStyleType: 'disc' }}>
+                            <li><strong>Service Infrastructure:</strong> Authenticating requests, managing API keys, and routing prompts to upstream SOTA providers (OpenAI, Anthropic, etc.).</li>
+                            <li><strong>Analytics & Logs:</strong> Monitoring traffic data, location data, and log files to understand how our orchestration layer is performing and to generate your dashboard statistics.</li>
+                            <li><strong>Security:</strong> Using IP addresses, device signatures, and behavior patterns to combat spam, DDoS attacks, and unauthorized commercial reselling.</li>
+                            <li><strong>Compliance:</strong> Maintaining legal and regulatory compliance and enforcing our strict "Individual Use" policy.</li>
+                        </ul>
+
+                        <h3 style={{ fontSize: '20px', fontWeight: '700', marginTop: '20px', marginBottom: '10px' }}>Cookies and Other Tracking Technology</h3>
+                        <p>We use Cookies and Tracking Technologies (such as Google Analytics) to personalize your experience. These technologies help us recognize your session, remember your dashboard preferences (like dark mode or sidebar state), and analyze usage to optimize our global edge nodes.</p>
+                    </section>
+
+                    <section>
                         <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>3. How We Share and Disclose Your Personal Data</h2>
-                        <p style={{ marginBottom: '16px' }}>Frenix enforces a strict "no-sale" policy regarding your information. Disclosure occurs only under specific operational requirements:</p>
-                        <ul style={{ paddingLeft: '24px', listStyleType: 'disc', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            <li><strong>Upstream Model Providers:</strong> When you send a request, your prompt content is relayed to providers like OpenAI, LLC or Anthropic, PBC. While Frenix doesn't store terminal logs of this content, the providers themselves have their own retention policies.</li>
-                            <li><strong>Infrastructure Sub-processors:</strong> Our hosting providers (e.g., AWS, Vercel) and database providers (e.g., Supabase, MongoDB) act as data processors under strict confidentiality agreements.</li>
-                            <li><strong>Legal & Compliance:</strong> We may disclose data if required by a valid subpoena, court order, or if we believe in good faith that disclosure is necessary to prevent physical harm or financial loss.</li>
+                        <p>We do not "sell" your personal data. Disclosure occurs only in the following business contexts:</p>
+                        <ul style={{ paddingLeft: '24px', listStyleType: 'disc' }}>
+                            <li><strong>Infrastructure Providers:</strong> We share data with vendors like Vercel (hosting), Supabase (database), and Cloudflare (security) to perform tasks on our behalf.</li>
+                            <li><strong>Upstream AI Providers:</strong> Your Inputs are sent to providers like OpenAI or Anthropic to generate responses. These providers have their own privacy policies governing that data.</li>
+                            <li><strong>Corporate Transactions:</strong> In the event of a merger, divestiture, or sale of Frenix assets, your data may be transferred to the successor entity.</li>
+                            <li><strong>Legal Obligations:</strong> We will disclose information if required by law, subpoena, or to protect the safety of our users and the public.</li>
                         </ul>
                     </section>
 
                     <section>
                         <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>4. Your Rights and Choices</h2>
-                        <p>Under global privacy frameworks (including GDPR and CCPA), you hold significant rights over your data. You may request to:</p>
-                        <ul style={{ paddingLeft: '24px', listStyleType: 'disc', marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            <li><strong>Access & Portability:</strong> Obtain a copy of all metadata and account information we hold in a machine-readable format.</li>
-                            <li><strong>Rectification:</strong> Correct any inaccurate personal data (often via your linked GitHub profile).</li>
-                            <li><strong>Erasure ("Right to be Forgotten"):</strong> Request the permanent deletion of your Frenix account and all associated API keys and usage history.</li>
-                            <li><strong>Restriction of Processing:</strong> Object to our use of your data for specific analytics or marketing purposes.</li>
+                        <p>Depending on your jurisdiction (GDPR, CCPA, etc.), you have certain rights regarding your personal data:</p>
+                        <ul style={{ paddingLeft: '24px', listStyleType: 'disc' }}>
+                            <li><strong>Right to Access:</strong> Request a copy of the metadata and account info we hold.</li>
+                            <li><strong>Right to Deletion:</strong> Request the removal of your account and associated API keys.</li>
+                            <li><strong>Right to Correction:</strong> Update inaccurate data through your account profile.</li>
+                            <li><strong>Opt-Out:</strong> Unsubscribe from marketing communications at any time.</li>
                         </ul>
                     </section>
 
                     <section>
                         <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>5. Data Security</h2>
-                        <p>Frenix employs a multi-layered security strategy. Your API keys are encrypted at rest using AES-256 standards, and all transport layer traffic is secured via TLS 1.3. We conduct regular vulnerability assessments and enforce strict principle-of-least-privilege access for our internal administrative tools. In the event of a suspected data breach, we will notify affected users and relevant authorities within 72 hours of verification.</p>
+                        <p>We have implemented robust measures designed to secure your personal data. API keys are encrypted at rest, and all traffic is secured via TLS 1.3. However, no internet transmission is 100% secure; you use the Site and Service at your own risk. You are responsible for keeping your API keys and credentials confidential.</p>
                     </section>
 
                     <section>
-                        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>6. Integration of Third-Party Platforms</h2>
-                        <p>Our service relies on GitHub OAuth for seamless entry. By using this integration, you authorize us to access specific tokens and profile data. We do not store your GitHub password. Furthermore, any third-party "Add-ons" or custom plugins you enable may collect their own data; we advise reviewing the manifest and privacy terms for every external integration you authorize.</p>
+                        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>6. Data Retentions</h2>
+                        <p>We retain your personal data for as long as necessary to fulfill your subscription requirements and comply with legal audits. When no longer required, data is either permanently deleted or anonymized for long-term statistical analysis.</p>
                     </section>
 
                     <section>
-                        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>7. Personal Data Retention</h2>
-                        <p>We maintain data only as long as necessary for operative purposes. Account data is kept for the duration of your active subscription. Metadata related to API requests is stored for 90 days in "Hot Storage" for dashboard visualization, after which it is moved to encrypted cold storage for up to 1 year for audit purposes before permanent purging.</p>
-                    </section>
-
-                    <section>
-                        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>8. Eligibility</h2>
-                        <p>Our services are strictly controlled for users aged 18 and older. Frenix does not knowingly market to or collect data from minors. If you are a parent or guardian and believe your child has provided us with Personal Data, please contact us immediately to facilitate its removal from our systems.</p>
-                    </section>
-
-                    <section>
-                        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>9. Data Transfers</h2>
-                        <p>Frenix is a global service. Your data may be processed in the United States, Singapore, or the European Union depending on your proximity to our edge nodes. We utilize Standard Contractual Clauses (SCCs) to ensure your data remains protected even when moving across international borders.</p>
-                    </section>
-
-                    <section>
-                        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>10. Governing Law</h2>
-                        <p>Any disputes arising from this Privacy Policy shall be governed by the laws of the jurisdiction where our parent entity is registered. You agree to submit to the exclusive jurisdiction of the courts located within that territory for the resolution of any legal matter arising from the Service.</p>
-                    </section>
-
-                    <section>
-                        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>11. Regulatory Disclosures (GDPR & U.S. State Laws)</h2>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                            <div>
-                                <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-main)', marginBottom: '10px' }}>European Economic Area (GDPR)</h3>
-                                <p>Our legal bases for processing include: (a) Performance of a Contract, (b) Legitimate Interest in security and service optimization, and (c) Compliance with Legal Obligations. The "Data Controller" for EEA users can be reached via our official support channels.</p>
-                            </div>
-                            <div>
-                                <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-main)', marginBottom: '10px' }}>California Privacy Rights (CCPA/CPRA)</h3>
-                                <p>Frenix does not "Sell" your information as defined by the CCPA. We do "Share" specific metadata with service providers for business purposes. California residents have the right to opt-out of sharing for cross-contextual behavioral advertising and the right to non-discrimination for exercising their privacy rights.</p>
-                            </div>
-                        </div>
+                        <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px', color: 'var(--primary)', letterSpacing: '-0.5px' }}>7. Minor Eligibility</h2>
+                        <p>Frenix is intended for users who are at least 13 years of age. If we learn that we have collected personal data from a child under 13 without parental consent, we will delete that information immediately.</p>
                     </section>
 
                     <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '60px', borderTop: '1px solid var(--border)', paddingTop: '32px' }}>
-                        Last updated: March 2, 2026. This version supersedes all previous versions.
+                        Last updated: March 14, 2026. This policy supersedes all previous versions.
                     </p>
                 </div>
             </div>
