@@ -2,10 +2,32 @@ import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createGatewayKey, fetchStatsByEmail } from '@/lib/gateway';
+import { createServerClient } from '@supabase/ssr';
 
 export async function POST(req: NextRequest) {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    let user;
+    const authHeader = req.headers.get('Authorization');
+
+    if (authHeader?.startsWith('Bearer ')) {
+        const token = authHeader.substring(7);
+        const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            {
+                cookies: {
+                    getAll: () => [],
+                    setAll: () => {},
+                },
+            }
+        );
+        const { data: { user: u } } = await supabase.auth.getUser(token);
+        user = u;
+    } else {
+        const supabase = await createClient();
+        const { data: { user: u } } = await supabase.auth.getUser();
+        user = u;
+    }
+
     if (!user?.email) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const sessionUser = {
