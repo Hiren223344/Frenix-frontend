@@ -35,7 +35,7 @@ export default function BlogPage() {
           <p className="text-xl text-white/60 leading-relaxed mb-8 font-medium">Why pay $0.01 for the same answer over and over? Semantic caching uses vector embeddings to recognize identical queries, even if the phrasing is different.</p>
           
           <h2 className="text-3xl font-bold mt-16 mb-6">Beyond Exact Matches</h2>
-          <p className="text-white/50 leading-relaxed mb-8">Traditional caches use MD5 hashes of the request body. If a user changes "Hi" to "Hello", the cache misses. Semantic caching instead maps the *meaning* of the text into a 1536-dimensional vector space. If the cosine similarity is > 0.98, we serve the cached response instantly.</p>
+          <p className="text-white/50 leading-relaxed mb-8">Traditional caches use MD5 hashes of the request body. If a user changes "Hi" to "Hello", the cache misses. Semantic caching instead maps the *meaning* of the text into a 1536-dimensional vector space. If the cosine similarity is {">"} 0.98, we serve the cached response instantly.</p>
 
           <div className="my-12 p-8 rounded-3xl bg-white/[0.02] border border-white/10">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
