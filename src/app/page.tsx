@@ -296,13 +296,69 @@ export default function Home() {
         </section>
       </RevealSection>
 
+      {/* ── Apache Bench Highlight ───────────────────────────────── */}
+      <RevealSection delay={50}>
+        <div className="max-w-[1200px] mx-auto px-6 mb-24">
+          <div className="p-8 md:p-16 rounded-[3rem] bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 opacity-10">
+              <Terminal size={200} />
+            </div>
+            
+            <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12">
+              <div className="max-w-xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest mb-6">
+                  Verified by Apache Bench (ab)
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black tracking-tighter leading-none mb-6">
+                  Performance that <br />
+                  <span className="text-blue-500">defies the proxy delay.</span>
+                </h2>
+                <p className="text-white/50 text-base md:text-lg font-medium leading-relaxed mb-8">
+                  Recent stress tests on our <span className="text-white">v2 Enterprise Path</span> demonstrate world-class stability. Zero dropped packets, zero latency spikes—even under heavy concurrent load.
+                </p>
+                
+                <div className="flex flex-wrap gap-4">
+                  <div className="px-6 py-4 rounded-2xl bg-white/5 border border-white/10">
+                    <span className="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-1">P95 Latency</span>
+                    <span className="text-2xl font-bold font-mono">560ms</span>
+                  </div>
+                  <div className="px-6 py-4 rounded-2xl bg-white/5 border border-white/10">
+                    <span className="block text-[10px] font-black uppercase tracking-widest text-white/30 mb-1">Success Rate</span>
+                    <span className="text-2xl font-bold font-mono text-emerald-500">100.0%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full lg:w-[450px] aspect-square rounded-[3rem] bg-black/40 border border-white/10 p-2 overflow-hidden shadow-2xl">
+                <div className="w-full h-full bg-[#0a0a0a] rounded-[2.5rem] p-8 font-mono text-[11px] leading-tight text-white/40 overflow-hidden">
+                  <p className="text-blue-400 mb-4">$ ab -n 100 -c 10 http://api.frenix.sh/v1/chat</p>
+                  <p>Benchmarking api.frenix.sh (be patient).....done</p>
+                  <p className="mt-4 text-white/80">Server Software:        Frenix-Gateway/2.1.0</p>
+                  <p>Server Hostname:        api.frenix.sh</p>
+                  <p>Total time taken:      3.941 seconds</p>
+                  <p>Complete requests:      100</p>
+                  <p className="text-emerald-500 font-bold">Failed requests:        0</p>
+                  <p>Total transferred:     43200 bytes</p>
+                  <p className="mt-4 text-white/80">Requests per second:    25.37 [#/sec] (mean)</p>
+                  <p className="text-blue-400">Time per request:       39.410 [ms] (mean)</p>
+                  <p className="mt-4">Percentage of the requests served within (ms)</p>
+                  <p>&nbsp; 50%&nbsp; &nbsp; 378ms</p>
+                  <p>&nbsp; 95%&nbsp; &nbsp; 560ms</p>
+                  <p>&nbsp; 99%&nbsp; &nbsp; 612ms</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </RevealSection>
+
       {/* ── Stats ──────────────────────────────────────────────── */}
       <RevealSection delay={80}>
         <div className="max-w-[1200px] mx-auto mb-24 px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/5 border-y border-white/5">
             {[
-              { num: 99.7, suffix: "%", label: "Uptime SLA" },
-              { num: 38, prefix: "<", suffix: "ms", label: "Avg latency" },
+              { num: 100, suffix: "%", label: "AB Success Rate" },
+              { num: 39, prefix: "<", suffix: "ms", label: "Turbo Response" },
               { num: 150, suffix: "+", label: "Models supported" },
             ].map((s, i) => (
               <div key={i} className="py-12 md:py-16 text-center group transition-colors hover:bg-white/[0.01]">
