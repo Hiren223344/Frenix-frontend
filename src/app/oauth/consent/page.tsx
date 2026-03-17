@@ -80,7 +80,7 @@ export default async function ConsentPage({
         {/* Understated Logo Handshake */}
         <div className="flex items-center gap-6 mt-12 mb-12">
           <div className="w-16 h-16 rounded-[20px] bg-white flex items-center justify-center p-3.5 shadow-sm border border-black/5">
-            <img src="/Logo-withoutbg.png" alt="F" className="w-full h-full object-contain" />
+            <img src="/logo-withoutbg.png" alt="F" className="w-full h-full object-contain" />
           </div>
           <div className="flex gap-2 opacity-10">
             <div className="w-1.5 h-1.5 rounded-full bg-white" />

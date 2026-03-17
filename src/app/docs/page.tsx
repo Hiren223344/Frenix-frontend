@@ -74,6 +74,7 @@ const sections = [
   { id: 'oauth', label: 'OAuth & Connect', icon: User },
   { id: 'chat', label: 'Chat Completions', icon: Zap },
   { id: 'images', label: 'Images', icon: Image },
+  { id: 'videos', label: 'Videos', icon: Image },
   { id: 'audio', label: 'Audio', icon: Mic },
   { id: 'embeddings', label: 'Embeddings', icon: Brain },
   { id: 'moderations', label: 'Moderations', icon: Shield },
@@ -231,7 +232,7 @@ x-api-key: sk-frenix-YOUR_KEY`} />
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.6, ease: "easeOut" }}
             id="oauth" className="scroll-mt-32 space-y-12">
-            
+
             <div className="space-y-4">
               <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Sign In with Frenix</h2>
               <p className="text-muted-foreground/80 text-sm md:text-lg leading-relaxed max-w-2xl">
@@ -241,20 +242,20 @@ x-api-key: sk-frenix-YOUR_KEY`} />
 
             {/* --- Integration Steps --- */}
             <div className="space-y-16">
-              
+
               {/* Step 1: Authorization */}
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 border border-primary/30 text-primary font-bold text-xs">1</div>
                   <h3 className="text-xl font-bold text-foreground">Initiate Authorization</h3>
                 </div>
-                
+
                 <p className="text-muted-foreground text-sm md:text-base leading-relaxed pl-12">
                   Construct a URL to redirect the user to. This will trigger the Frenix consent screen where the user can approve your application.
                 </p>
 
                 <div className="pl-12 space-y-4">
-                   <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3">
                     <Method method="GET" />
                     <code className="text-xs md:text-sm font-bold text-foreground/60 font-mono">/oauth/authorize</code>
                   </div>
@@ -266,7 +267,7 @@ x-api-key: sk-frenix-YOUR_KEY`} />
   state=RANDOM_STATE&
   code_challenge=S256_CHALLENGE&
   code_challenge_method=S256`} />
-                  
+
                   <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 mt-4">
                     <h4 className="text-xs font-black uppercase tracking-wider text-foreground/40 mb-3">Implementation Tip: PKCE</h4>
                     <p className="text-xs text-muted-foreground leading-relaxed">
@@ -292,7 +293,7 @@ x-api-key: sk-frenix-YOUR_KEY`} />
                     <Method method="POST" />
                     <code className="text-xs md:text-sm font-bold text-foreground/60 font-mono">/api/oauth/token</code>
                   </div>
-                  
+
                   <CopyBlock lang="javascript" code={`// Node.js Example using axios
 const authHeader = Buffer.from(\`\${CLIENT_ID}:\${CLIENT_SECRET}\`).toString('base64');
 
@@ -331,7 +332,7 @@ const { access_token, refresh_token } = response.data;`} />
                     <Method method="GET" />
                     <code className="text-xs md:text-sm font-bold text-foreground/60 font-mono">/api/oauth/user</code>
                   </div>
-                  
+
                   <CopyBlock lang="bash" code={`# Using curl
 curl ${DASHBOARD}/api/oauth/user \\
   -H "Authorization: Bearer \${ACCESS_TOKEN}"`} />
@@ -339,7 +340,7 @@ curl ${DASHBOARD}/api/oauth/user \\
                   <div className="overflow-hidden rounded-2xl border border-white/5 bg-black/40">
                     <div className="bg-white/5 px-4 py-2 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">Expected Response</div>
                     <pre className="p-4 text-[12px] text-primary/80 font-mono">
-{`{
+                      {`{
   "id": "user_id_uuid",
   "email": "user@example.com",
   "user_metadata": {
@@ -359,14 +360,14 @@ curl ${DASHBOARD}/api/oauth/user \\
             {/* --- Design Your Core --- */}
             <div className="pt-12 border-t border-white/5">
               <h3 className="text-sm font-black uppercase tracking-[0.2em] text-foreground/40 italic mb-8 text-center">Standard UI Component</h3>
-              
+
               <div className="grid md:grid-cols-2 gap-8 items-center bg-white/[0.02] border border-white/5 rounded-[40px] p-8 md:p-12">
                 <div className="space-y-6">
                   <h4 className="text-2xl font-black tracking-tight text-foreground">Sign In Button</h4>
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     Maintain a premium feel by using our official black-on-white high contrast aesthetics.
                   </p>
-                  
+
                   {/* Visual Example */}
                   <div className="pt-4">
                     <button className="px-8 py-4 bg-white text-black rounded-2xl font-black text-sm tracking-tight flex items-center gap-3 hover:scale-[1.02] transition-transform shadow-[0_0_40px_rgba(255,255,255,0.1)]">
@@ -463,7 +464,135 @@ curl ${DASHBOARD}/api/oauth/user \\
             </div>
           </motion.section>
 
-          {/* ── Audio ───────────────────────────────────── */}
+          {/* ── Video Generation ────────────────────────── */}
+          <motion.section
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            id="videos" className="scroll-mt-32 space-y-8">
+            <h2 className="text-2xl md:text-3xl font-black text-foreground tracking-tight">Video Generation</h2>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 flex-wrap">
+                <Method method="POST" />
+                <code className="text-xs md:text-sm font-bold text-foreground/60 font-mono">/v1/videos/generations</code>
+                <Badge color="blue">Veo 3.1</Badge>
+              </div>
+              <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
+                Generate AI-powered videos from text prompts. Powered by Veo 3.1 engine. Returns a direct URL to the generated MP4 video file.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-foreground/40 italic">Request Body</h3>
+              <CopyBlock code={`{
+  "model": "veo-3.1",
+  "prompt": "A cinematic drone shot flying over a futuristic city at sunset",
+  "aspect_ratio": "16:9",
+  "duration": 5,
+  "quality": "540p",
+  "n": 1
+}`} />
+            </div>
+
+            <div className="overflow-hidden rounded-[24px] border border-white/5 bg-white/[0.02]">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-white/5 border-b border-white/5">
+                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Parameter</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Type</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Default</th>
+                      <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Description</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {[
+                      ['model', 'string', 'veo-3.1', 'Video model to use. Supports veo-3.1, wan, and other video models.'],
+                      ['prompt', 'string', '—', 'Required. Text description of the video to generate.'],
+                      ['aspect_ratio', 'string', '"16:9"', 'Video aspect ratio. Options: "16:9", "9:16", "1:1".'],
+                      ['duration', 'number', '5', 'Video duration in seconds (3–10).'],
+                      ['quality', 'string', '"540p"', 'Video quality. Options: "540p", "720p", "1080p".'],
+                      ['n', 'number', '1', 'Number of videos to generate.'],
+                    ].map(([param, type, def, desc]) => (
+                      <tr key={param} className="hover:bg-white/[0.01] transition-colors">
+                        <td className="px-6 py-4 text-xs font-bold text-foreground font-mono">{param}</td>
+                        <td className="px-6 py-4 text-xs font-medium text-muted-foreground">{type}</td>
+                        <td className="px-6 py-4 text-xs font-medium text-primary/80 font-mono">{def}</td>
+                        <td className="px-6 py-4 text-xs font-medium text-muted-foreground">{desc}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-foreground/40 italic">cURL Example</h3>
+              <CopyBlock lang="bash" code={`curl ${GATEWAY}/v1/videos/generations \\
+    -H "Authorization: Bearer sk-frenix-YOUR_KEY" \\
+    -H "Content-Type: application/json" \\
+    -d '{
+      "model": "veo-3.1",
+      "prompt": "A cinematic drone shot flying over a futuristic city at sunset",
+      "aspect_ratio": "16:9",
+      "duration": 5,
+      "quality": "540p"
+    }'`} />
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-sm font-black uppercase tracking-[0.2em] text-foreground/40 italic">Python Example</h3>
+              <CopyBlock lang="python" code={`import openai
+
+client = openai.OpenAI(
+    base_url="${GATEWAY}/v1",
+    api_key="sk-frenix-YOUR_KEY"
+)
+
+response = client.post(
+    "/videos/generations",
+    body={
+        "model": "veo-3.1",
+        "prompt": "A timelapse of a flower blooming in a garden",
+        "aspect_ratio": "16:9",
+        "duration": 5,
+        "quality": "720p"
+    },
+    cast_to=dict
+)
+
+video_url = response["data"][0]["url"]
+print(f"Video: {video_url}")`} />
+            </div>
+
+            <div className="overflow-hidden rounded-2xl border border-white/5 bg-black/40">
+              <div className="bg-white/5 px-4 py-2 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">Response</div>
+              <pre className="p-4 text-[12px] text-primary/80 font-mono">
+                {`{
+  "created": 1710000000,
+  "data": [
+    {
+      "url": "https://cdn.veo31ai.io/explore/<task_id>.mp4",
+      "model": "veo-3.1"
+    }
+  ]
+}`}
+              </pre>
+            </div>
+
+            <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6">
+              <h4 className="text-xs font-black uppercase tracking-wider text-foreground/40 mb-3">Important Notes</h4>
+              <ul className="text-xs text-muted-foreground leading-relaxed space-y-2">
+                <li>• Video generation is asynchronous. The API will wait up to <strong>60 seconds</strong> for the video to be ready before returning.</li>
+                <li>• The returned URL is a direct link to the MP4 file hosted on CDN.</li>
+                <li>• Video generation costs are tracked and billed based on the model, duration, and quality.</li>
+                <li>• Supported models include: <code className="text-primary/80 font-mono">veo-3.1</code>, <code className="text-primary/80 font-mono">wan</code>, and other video-capable models.</li>
+              </ul>
+            </div>
+          </motion.section>
+
+          {/* ── Audio ────────��──────────────────────────── */}
           <motion.section
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -709,6 +838,7 @@ claude`} />
                       ['POST', '/v1/images/generations', 'Yes'],
                       ['POST', '/v1/images/edits', 'Yes'],
                       ['POST', '/v1/images/variations', 'Yes'],
+                      ['POST', '/v1/videos/generations', 'Yes'],
                       ['POST', '/v1/audio/speech', 'Yes'],
                       ['POST', '/v1/audio/transcriptions', 'Yes'],
                       ['POST', '/v1/audio/translations', 'Yes'],

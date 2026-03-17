@@ -240,7 +240,7 @@ export function Header({ links, user, onSignOut }: HeaderProps) {
 export const FrenixLogo = (props: React.ComponentProps<'div'>) => (
     <div {...props} className={cn('flex items-center gap-2', props.className)}>
         <img
-            src="/Logo-withoutbg.png"
+            src="/logo-withoutbg.png"
             alt="Frenix"
             className="h-5 w-auto dark:invert-0 brightness-0 dark:brightness-100 opacity-90"
         />

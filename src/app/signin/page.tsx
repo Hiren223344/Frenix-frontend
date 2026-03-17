@@ -46,7 +46,7 @@ export default function SignInPage() {
                 }}>
                     {/* Logo */}
                     <div style={{ marginBottom: '32px' }}>
-                        <img src="/Logo-withoutbg.png" alt="Frenix" style={{ width: '56px', height: '56px', marginBottom: '16px' }} />
+                        <img src="/logo-withoutbg.png" alt="Frenix" style={{ width: '56px', height: '56px', marginBottom: '16px' }} />
                         <h1 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '-0.5px' }}>Sign in to Frenix</h1>
                         <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '8px', lineHeight: '1.6' }}>
                             Connect your GitHub account to access your AI gateway, API keys, and dashboard.

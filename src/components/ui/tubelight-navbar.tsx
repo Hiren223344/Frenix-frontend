@@ -51,7 +51,7 @@ export function NavBar({ items, className, onItemClick }: NavBarProps) {
         >
             <div className="flex items-center gap-3 bg-bg-card/50 border border-border/40 backdrop-blur-2xl py-1.5 px-2 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.2)]" style={{ minWidth: 'fit-content' }}>
                 <Link href="/" className="ml-2 mr-4 flex items-center shrink-0">
-                    <img src="/Logo-withoutbg.png" alt="Logo" className="h-6 w-auto dark:invert-0 brightness-0 dark:brightness-100 opacity-90" style={{ height: '24px', width: 'auto' }} />
+                    <img src="/logo-withoutbg.png" alt="Logo" className="h-6 w-auto dark:invert-0 brightness-0 dark:brightness-100 opacity-90" style={{ height: '24px', width: 'auto' }} />
                 </Link>
                 {items.map((item) => {
                     const Icon = item.icon

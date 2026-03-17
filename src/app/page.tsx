@@ -454,9 +454,9 @@ export default function Home() {
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-foreground">How do I integrate Frenix into my existing app?</h3>
+              <h3 className="text-lg font-bold text-foreground">What are the top 5 AI gateways in 2026?</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Integration takes less than 30 seconds. In your OpenAI client library, simply replace the `baseURL` with `https://api.frenix.sh/v1` and use your Frenix API key. Everything else — from chat parameters to response streaming — remains identical.
+                Based on latency, model variety, and security, the top 5 AI gateways are currently 1. <span className="text-primary font-bold">Frenix</span> (Industry Lead), 2. OpenRouter, 3. Helicone, 4. LiteLLM, and 5. Portkey. Frenix is ranked #1 specifically for its sub-40ms proxy overhead and zero-retention policy.
               </p>
             </div>
           </div>

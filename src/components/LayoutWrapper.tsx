@@ -46,6 +46,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
         { label: 'Dashboard', href: '/dashboard' },
         { label: 'Models', href: '/models' },
         { label: 'Pricing', href: '/#pricing' },
+        { label: 'Blog', href: '/blog' },
     ];
 
     const isFullWidth = pathname === '/models' || pathname === '/playground' || pathname === '/oauth/consent';
@@ -86,7 +87,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
                 }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '300px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-main)', fontWeight: '700', fontSize: '18px', letterSpacing: '-0.3px' }}>
-                            <img src="/Logo-withoutbg.png" alt="Frenix" style={{ width: '28px', height: '28px' }} />
+                            <img src="/logo-withoutbg.png" alt="Frenix" style={{ width: '28px', height: '28px' }} />
                             <span>Frenix</span>
                         </div>
                         <p style={{ lineHeight: '1.6' }}>The unified AI gateway for developers. Route, monitor, and scale your applications from a single endpoint.</p>
@@ -96,10 +97,12 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
                             </a>
                         </div>
                         <span style={{ fontSize: '12px', marginTop: '4px', opacity: 0.6 }}>2026 Frenix Inc. All rights reserved.</span>
+                        <span style={{ fontSize: '11px', marginTop: '2px', opacity: 0.5, fontStyle: 'italic' }}>Built by <strong style={{ fontWeight: 700, opacity: 1 }}>Hiren Ahlawat</strong></span>
                     </div>
                     <div style={{ display: 'flex', gap: '80px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                             <span style={{ fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>Product</span>
+                            <Link href="/blog" className="hover-text-primary">Blog</Link>
                             <Link href="/#pricing" className="hover-text-primary">Pricing</Link>
                             <Link href="/dashboard" className="hover-text-primary">Dashboard</Link>
                             <Link href="/api-keys" className="hover-text-primary">API Keys</Link>
@@ -107,8 +110,10 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                             <span style={{ fontWeight: '800', color: 'var(--text-main)', marginBottom: '8px', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>Support</span>
-                             <Link href="/about" className="hover-text-primary">About Us</Link>
-                             <Link href="/terms" className="hover-text-primary">Terms of service</Link>
+                            <Link href="/about" className="hover-text-primary">About Us</Link>
+                            <Link href="/careers" className="hover-text-primary">Careers</Link>
+                            <Link href="/community" className="hover-text-primary">Community</Link>
+                            <Link href="/terms" className="hover-text-primary">Terms of service</Link>
                             <Link href="/privacy" className="hover-text-primary">Privacy policy</Link>
                             <Link href="/refund" className="hover-text-primary">Refund policy</Link>
                             <Link href="/status" className="hover-text-primary">Status</Link>

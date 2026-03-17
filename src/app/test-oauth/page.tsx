@@ -42,7 +42,7 @@ export default function OAuthTestPage() {
         body: JSON.stringify({
           name: 'OAuth Tester ' + Math.floor(Math.random() * 1000),
           redirect_uris: [window.location.origin + '/test-oauth/callback'],
-          logo_url: '/Logo-withoutbg.png'
+          logo_url: '/logo-withoutbg.png'
         })
       });
       if (res.ok) {
@@ -63,9 +63,9 @@ export default function OAuthTestPage() {
     const data = encoder.encode(verifier);
     const digest = await window.crypto.subtle.digest('SHA-256', data);
     const base64url = btoa(String.fromCharCode(...new Uint8Array(digest)))
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=+$/, '');
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
     return base64url;
   };
 
@@ -73,14 +73,14 @@ export default function OAuthTestPage() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://pmglmcvceitpcvrlpjhp.supabase.co';
     const redirectUri = window.location.origin + '/test-oauth/callback';
     const state = Math.random().toString(36).substring(7);
-    
+
     // PKCE Setup
     const codeVerifier = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
     localStorage.setItem('oauth_verifier', codeVerifier);
 
     // Construct the Supabase OAuth Authorize URL
-    const authUrl = `${supabaseUrl}/auth/v1/oauth/authorize?` + 
+    const authUrl = `${supabaseUrl}/auth/v1/oauth/authorize?` +
       `client_id=${clientId}&` +
       `response_type=code&` +
       `redirect_uri=${encodeURIComponent(redirectUri)}&` +
@@ -95,14 +95,14 @@ export default function OAuthTestPage() {
   return (
     <div className="min-h-screen bg-black text-white p-12 font-sans">
       <div className="max-w-4xl mx-auto space-y-12">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <h1 className="text-4xl font-black italic tracking-tighter">OAuth <span className="text-primary">Stresstest</span></h1>
             <p className="text-gray-500 font-medium">Verify your Supabase OAuth Server integration with PKCE enabled.</p>
           </div>
-          <button 
+          <button
             onClick={createTestApp}
             className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-primary transition-all"
           >
@@ -126,8 +126,8 @@ export default function OAuthTestPage() {
                   {app.logo_url ? <img src={app.logo_url} className="w-full h-full object-cover" /> : <Shield size={24} className="text-gray-700" />}
                 </div>
                 <div className="text-right">
-                   <div className="text-[10px] font-black text-gray-700 uppercase tracking-widest mb-1">Client ID</div>
-                   <code className="text-[10px] text-primary bg-primary/10 px-2 py-0.5 rounded">{app.client_id.substring(0, 12)}...</code>
+                  <div className="text-[10px] font-black text-gray-700 uppercase tracking-widest mb-1">Client ID</div>
+                  <code className="text-[10px] text-primary bg-primary/10 px-2 py-0.5 rounded">{app.client_id.substring(0, 12)}...</code>
                 </div>
               </div>
 
@@ -136,7 +136,7 @@ export default function OAuthTestPage() {
                 <p className="text-gray-500 text-sm font-medium">Click below to start the authorize handshake.</p>
               </div>
 
-              <button 
+              <button
                 onClick={() => handleSignIn(app.client_id)}
                 className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center gap-3 font-black text-sm uppercase tracking-widest group-hover:bg-primary group-hover:text-black group-hover:border-transparent transition-all"
               >
@@ -148,20 +148,20 @@ export default function OAuthTestPage() {
 
           {!loading && apps.length === 0 && (
             <div className="col-span-full py-24 text-center border-2 border-dashed border-white/5 rounded-[48px]">
-                <Zap size={48} className="mx-auto text-gray-800 mb-4" />
-                <p className="text-gray-600 font-bold text-xl tracking-tight">No OAuth apps registered yet.</p>
-                <p className="text-gray-700 font-medium">Create a test app to begin debugging.</p>
+              <Zap size={48} className="mx-auto text-gray-800 mb-4" />
+              <p className="text-gray-600 font-bold text-xl tracking-tight">No OAuth apps registered yet.</p>
+              <p className="text-gray-700 font-medium">Create a test app to begin debugging.</p>
             </div>
           )}
         </div>
 
         {/* Footer Info */}
         <div className="pt-12 border-t border-white/5 flex items-center justify-between opacity-30 text-[10px] font-black uppercase tracking-[0.5em]">
-           <span>OAuth Testing Node v1.1</span>
-           <div className="flex items-center gap-4">
-              <span>Status: PKCE ACTIVE</span>
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-           </div>
+          <span>OAuth Testing Node v1.1</span>
+          <div className="flex items-center gap-4">
+            <span>Status: PKCE ACTIVE</span>
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          </div>
         </div>
 
       </div>
