@@ -125,7 +125,27 @@ export default function BillingPage() {
 
                             <div className="flex flex-col gap-3 min-w-[220px]">
                                 {currentTier === 'free' && (
-                                    <Button className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black text-sm tracking-widest uppercase hover:opacity-95 transition-opacity">
+                                    <Button 
+                                        onClick={() => {
+                                            toast('💳 Upgrade Instructions', {
+                                                description: (
+                                                    <div className="mt-2 text-xs space-y-3">
+                                                        <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                                                            <p className="font-bold text-white mb-1">For Indians:</p>
+                                                            <p className="text-muted-foreground">Pay Here: <span className="text-primary font-mono select-all">7206347667@fam</span></p>
+                                                            <p className="text-muted-foreground mt-1 text-[10px]">Then send a request to Telegram: <span className="text-primary font-bold">@itsmehiren</span></p>
+                                                        </div>
+                                                        <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                                                            <p className="font-bold text-white mb-1">International:</p>
+                                                            <p className="text-muted-foreground">Ask admin at: <span className="text-primary font-bold">@itsmehiren</span></p>
+                                                        </div>
+                                                    </div>
+                                                ),
+                                                duration: 10000,
+                                            });
+                                        }}
+                                        className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black text-sm tracking-widest uppercase hover:opacity-95 transition-opacity"
+                                    >
                                         UPGRADE TO PRO <ArrowRight size={16} className="ml-2" />
                                     </Button>
                                 )}
@@ -159,7 +179,29 @@ export default function BillingPage() {
                                     </li>
                                 ))}
                             </ul>
-                            <Button className="w-full h-12 rounded-xl bg-white/5 border border-white/10 text-foreground font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 transition-colors">Select Pro</Button>
+                            <Button 
+                                onClick={() => {
+                                    toast('💳 Upgrade Instructions', {
+                                        description: (
+                                            <div className="mt-2 text-xs space-y-3">
+                                                <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                                                    <p className="font-bold text-white mb-1">For Indians:</p>
+                                                    <p className="text-muted-foreground">Pay Here: <span className="text-primary font-mono select-all">7206347667@fam</span></p>
+                                                    <p className="text-muted-foreground mt-1 text-[10px]">Then send a request to Telegram: <span className="text-primary font-bold">@itsmehiren</span></p>
+                                                </div>
+                                                <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                                                    <p className="font-bold text-white mb-1">International:</p>
+                                                    <p className="text-muted-foreground">Ask admin at: <span className="text-primary font-bold">@itsmehiren</span></p>
+                                                </div>
+                                            </div>
+                                        ),
+                                        duration: 10000,
+                                    });
+                                }}
+                                className="w-full h-12 rounded-xl bg-white/5 border border-white/10 text-foreground font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 transition-colors"
+                            >
+                                Select Pro
+                            </Button>
                         </div>
 
                         <div className="p-8 bg-white/[0.02] border border-white/5 rounded-[32px] group hover:bg-white/[0.04] transition-all">
@@ -183,7 +225,24 @@ export default function BillingPage() {
                                     </li>
                                 ))}
                             </ul>
-                            <Button className="w-full h-12 rounded-xl bg-white/5 border border-white/10 text-foreground font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 transition-colors">Talk to Sales</Button>
+                            <Button 
+                                onClick={() => {
+                                    toast('💳 Contact Sales', {
+                                        description: (
+                                            <div className="mt-2 text-xs">
+                                                <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                                                    <p className="font-bold text-white mb-1">Enterprise Registration:</p>
+                                                    <p className="text-muted-foreground">Please contact our admin at Telegram: <span className="text-primary font-bold">@itsmehiren</span> for custom quotas and private deployments.</p>
+                                                </div>
+                                            </div>
+                                        ),
+                                        duration: 10000,
+                                    });
+                                }}
+                                className="w-full h-12 rounded-xl bg-white/5 border border-white/10 text-foreground font-black text-[10px] uppercase tracking-[0.2em] hover:bg-white/10 transition-colors"
+                            >
+                                Talk to Sales
+                            </Button>
                         </div>
                     </div>
                 </div>

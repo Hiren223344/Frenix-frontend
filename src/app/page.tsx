@@ -400,7 +400,7 @@ export default function Home() {
             </div>
 
             {/* Pro */}
-            <div className="p-8 md:p-12 bg-white/[0.03] border border-white/10 rounded-3xl flex flex-col relative overflow-hidden group">
+            <div className="p-8 md:p-12 bg-white/[0.03] border border-white/10 rounded-3xl flex flex-col relative overflow-hidden group col-span-1 md:col-span-2 lg:col-span-1">
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-6 px-3 py-1 bg-white/5 rounded-md self-start">Developer Pro</span>
               <div className="flex items-baseline gap-2 mb-4">
                 <span className="text-4xl md:text-5xl font-extrabold tracking-tighter text-white font-black">$<CountUp to={10} duration={2} /></span>
@@ -419,37 +419,29 @@ export default function Home() {
                 ))}
               </div>
 
-              <Link href="/signin" className="w-full h-14 rounded-2xl bg-primary text-black flex items-center justify-center font-bold text-sm tracking-widest uppercase hover:opacity-90 transition-all">
+              <button 
+                onClick={() => {
+                  toast('💳 Upgrade Instructions', {
+                    description: (
+                      <div className="mt-2 text-xs space-y-3">
+                        <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                          <p className="font-bold text-white mb-1">For Indians:</p>
+                          <p className="text-muted-foreground">Pay Here: <span className="text-primary font-mono select-all">7206347667@fam</span></p>
+                          <p className="text-muted-foreground mt-1 text-[10px]">Then send a request to Telegram: <span className="text-primary font-bold">@itsmehiren</span></p>
+                        </div>
+                        <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                          <p className="font-bold text-white mb-1">International:</p>
+                          <p className="text-muted-foreground">Ask admin at: <span className="text-primary font-bold">@itsmehiren</span></p>
+                        </div>
+                      </div>
+                    ),
+                    duration: 10000,
+                  });
+                }}
+                className="w-full h-14 rounded-2xl bg-primary text-black flex items-center justify-center font-bold text-sm tracking-widest uppercase hover:opacity-90 transition-all"
+              >
                 Upgrade Now
-              </Link>
-            </div>
-
-            {/* Team */}
-            <div className="p-8 md:p-12 bg-white rounded-[40px] flex flex-col relative overflow-hidden group border-[6px] border-primary/20">
-              <div className="absolute top-8 right-8 text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1 bg-black/5 rounded-md text-black/60">High Value</div>
-
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black/40 mb-6">Team Bot</span>
-              <div className="flex items-baseline gap-2 mb-4">
-                <span className="text-4xl md:text-5xl font-extrabold tracking-tighter text-black">$<CountUp to={49} duration={2} /></span>
-                <span className="text-black/40 text-sm font-medium">/mo</span>
-              </div>
-              <p className="text-black/60 text-sm md:text-base mb-10 leading-relaxed">Built for AI agents and automated workflows requiring high-performance model orchestration.</p>
-
-              <div className="flex-1 space-y-4 mb-12 relative">
-                {["All Models Access*", "Shared Workspace", "Team Identity Logs", "XOR Payload Security", "24/7 Priority Channel"].map((f, fi) => (
-                  <div key={fi} className="flex items-center gap-3 text-sm font-bold text-black/80">
-                    <div className="size-5 rounded-full bg-black/5 flex items-center justify-center shrink-0">
-                      <Check size={12} className="text-black" />
-                    </div>
-                    <span>{f}</span>
-                  </div>
-                ))}
-                <p className="text-[9px] text-black/30 font-bold italic mt-2 uppercase tracking-tight">*Excludes Opus & Gemini 3.1 Pro</p>
-              </div>
-
-              <Link href="/signin" className="w-full h-14 rounded-2xl bg-black text-white flex items-center justify-center font-bold text-sm tracking-widest uppercase hover:bg-black/90 transition-all">
-                Join Team
-              </Link>
+              </button>
             </div>
           </div>
 
