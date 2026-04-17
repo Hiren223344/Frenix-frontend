@@ -241,12 +241,13 @@ export default function StatusPage() {
     } catch (err) {
       console.error('System status fetch failed:', err);
       setLoading(false);
-      setLogs(prev => [{
+      const errorLog: LogEntry = {
         id: 'err-' + Date.now(),
         time,
         type: 'error',
         message: 'Master gateway unreachable. Retrying through secondary edge.'
-      }, ...prev].slice(0, 50));
+      };
+      setLogs(prev => [errorLog, ...prev].slice(0, 50));
     }
 
     // Models Status
@@ -260,12 +261,13 @@ export default function StatusPage() {
       if (data.data) {
         setModels(data.data);
         setModelsLoading(false);
-        setLogs(prev => [{
+        const modelsLog: LogEntry = {
           id: 'models-' + Date.now(),
           time,
           type: 'success',
           message: `Orchestrator broadcasted ${data.data.length} operational models.`
-        }, ...prev].slice(0, 50));
+        };
+        setLogs(prev => [modelsLog, ...prev].slice(0, 50));
       }
     } catch (err) {
       console.error('Models status fetch failed:', err);
