@@ -85,13 +85,13 @@ export function Globe({
       ...config,
       width: width * 2 || 1200,
       height: width * 2 || 1200,
-      onRender: (state) => {
+      onRender: (state: any) => {
         if (!pointerInteracting.current) phiRef.current += 0.005
         state.phi = phiRef.current + rs.get()
         state.width = width * 2 || 1200
         state.height = width * 2 || 1200
       },
-    })
+    } as any)
 
     setTimeout(() => {
         if(canvasRef.current) canvasRef.current.style.opacity = "1"
