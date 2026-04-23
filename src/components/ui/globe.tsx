@@ -18,9 +18,9 @@ const GLOBE_CONFIG = {
   diffuse: 1.2,
   mapSamples: 16000,
   mapBrightness: 1.2,
-  baseColor: [0.3, 0.3, 0.3],
-  markerColor: [0.1, 0.8, 1],
-  glowColor: [1, 1, 1],
+  baseColor: [0.3, 0.3, 0.3] as [number, number, number],
+  markerColor: [0.1, 0.8, 1] as [number, number, number],
+  glowColor: [1, 1, 1] as [number, number, number],
   markers: [
     { location: [14.5995, 120.9842], size: 0.03 },
     { location: [19.076, 72.8777], size: 0.1 },
