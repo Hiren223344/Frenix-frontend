@@ -108,13 +108,13 @@ const UnifiedEndpointBeam = () => {
         </div>
       </div>
 
-      <AnimatedBeam containerRef={containerRef} fromRef={fromRef} toRef={toRef} duration={3} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" strokeWidth={3} />
-      <AnimatedBeam containerRef={containerRef} fromRef={toRef} toRef={model1Ref} duration={3} delay={0.5} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" strokeWidth={2} />
-      <AnimatedBeam containerRef={containerRef} fromRef={toRef} toRef={model2Ref} duration={3} delay={0.8} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" strokeWidth={2} />
-      <AnimatedBeam containerRef={containerRef} fromRef={toRef} toRef={model3Ref} duration={3} delay={1.1} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" strokeWidth={2} />
-      <AnimatedBeam containerRef={containerRef} fromRef={toRef} toRef={model4Ref} duration={3} delay={1.4} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" strokeWidth={2} />
-      <AnimatedBeam containerRef={containerRef} fromRef={toRef} toRef={model5Ref} duration={3} delay={1.7} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" strokeWidth={2} />
-      <AnimatedBeam containerRef={containerRef} fromRef={toRef} toRef={model6Ref} duration={3} delay={2.0} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" strokeWidth={2} />
+      <AnimatedBeam containerRef={containerRef} fromRef={fromRef} toRef={toRef} duration={3} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" pathWidth={3} />
+      <AnimatedBeam containerRef={containerRef} fromRef={toRef} toRef={model1Ref} duration={3} delay={0.5} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" pathWidth={2} />
+      <AnimatedBeam containerRef={containerRef} fromRef={toRef} toRef={model2Ref} duration={3} delay={0.8} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" pathWidth={2} />
+      <AnimatedBeam containerRef={containerRef} fromRef={toRef} toRef={model3Ref} duration={3} delay={1.1} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" pathWidth={2} />
+      <AnimatedBeam containerRef={containerRef} fromRef={toRef} toRef={model4Ref} duration={3} delay={1.4} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" pathWidth={2} />
+      <AnimatedBeam containerRef={containerRef} fromRef={toRef} toRef={model5Ref} duration={3} delay={1.7} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" pathWidth={2} />
+      <AnimatedBeam containerRef={containerRef} fromRef={toRef} toRef={model6Ref} duration={3} delay={2.0} gradientStartColor="#3b82f6" gradientStopColor="#2dd4bf" pathWidth={2} />
     </div>
   );
 };
