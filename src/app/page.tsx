@@ -10,7 +10,7 @@ import ClickSpark from '@/components/ui/ClickSpark';
 import { BentoCard, BentoGrid } from "@/components/ui/bento-grid";
 import { OrbitingCircles } from "@/components/ui/orbiting-circles";
 import { AnimatedBeam } from "@/components/ui/animated-beam";
-import { Claude, DeepSeek, Grok, Meta, OpenAI, Google, Mistral } from '@lobehub/icons';
+import { Claude, DeepSeek, Exa, Grok, Meta, OpenAI, Google, Mistral } from '@lobehub/icons';
 import {
   Accordion,
   AccordionContent,
@@ -23,6 +23,9 @@ import { GlobePulse } from "@/components/ui/cobe-globe-pulse";
 import Particles from "@/components/ui/Particles";
 import { DiaTextReveal } from "@/components/ui/dia-text-reveal";
 import SplitText from '@/components/ui/SplitText';
+import dynamic from 'next/dynamic';
+
+const RiveIllustration = dynamic(() => import('@/components/ui/RiveIllustration'), { ssr: false });
 
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
@@ -399,10 +402,10 @@ const HorizontalScrollSection = ({ children, title }: { children: React.ReactNod
 
       // Setup blob points
       const numPoints = 8;
-      const numPaths = 2; 
+      const numPaths = 2;
       const allPoints: number[][] = [];
       for (let i = 0; i < numPaths; i++) {
-          allPoints.push(new Array(numPoints).fill(110)); // Start just below the screen instead of miles away
+        allPoints.push(new Array(numPoints).fill(110)); // Start just below the screen instead of miles away
       }
 
       const renderBlobs = () => {
@@ -413,7 +416,7 @@ const HorizontalScrollSection = ({ children, title }: { children: React.ReactNod
           for (let j = 0; j < numPoints - 1; j++) {
             const p = ((j + 1) / (numPoints - 1)) * 100;
             const cp = p - (1 / (numPoints - 1) * 100) / 2;
-            d += ` ${cp} ${points[j]} ${cp} ${points[j+1]} ${p} ${points[j+1]}`;
+            d += ` ${cp} ${points[j]} ${cp} ${points[j + 1]} ${p} ${points[j + 1]}`;
           }
           d += ` V 500 H 0 Z`;
           newPaths.push(d);
@@ -465,7 +468,7 @@ const HorizontalScrollSection = ({ children, title }: { children: React.ReactNod
             [j]: -10, // End just above the screen
             duration: blobRatio * 0.8, // reserve 20% for staggering
             ease: "sine.inOut",
-          }, horizontalRatio + (Math.random() * blobRatio * 0.2)); 
+          }, horizontalRatio + (Math.random() * blobRatio * 0.2));
         }
       }
 
@@ -562,135 +565,90 @@ export default function Home() {
 
         {/* ── Hero ──────────────────────────────────────────────── */}
         <section className="animate-fade flex flex-col items-center justify-center min-h-[95vh] relative pt-20 pb-20 z-10">
-          {/* Pattern removed in favor of Horizon Glow */}
+          <div className="hero-split flex flex-col items-center text-center max-w-[1200px] mx-auto px-4 sm:px-6 w-full gap-10 relative z-10">
 
-        <div className="hero-split flex flex-col items-center text-center max-w-[1200px] mx-auto px-6 w-full gap-16 relative z-10">
+            {/* Center Content */}
+            <div className="flex flex-col items-center">
+              <h1 className="text-[1.3rem] sm:text-[2.2rem] md:text-[3.6rem] lg:text-[4.4rem] text-white tracking-tight leading-tight font-semibold mb-6 md:mb-8 uppercase text-center whitespace-nowrap">
+                <DiaTextReveal
+                  text="Your Unified AI Gateway"
+                  duration={2}
+                  textColor="#ffffff"
+                  startOnView={true}
+                />
+              </h1>
 
-          {/* Center Content */}
-          <div className="flex flex-col items-center">
-            <h1 className="text-[1.8rem] sm:text-[3rem] md:text-[4.2rem] lg:text-[5rem] text-white tracking-tight leading-tight font-semibold mb-8 uppercase text-center whitespace-nowrap">
-              <DiaTextReveal
-                text="Your Unified AI Gateway"
-                duration={2}
-                textColor="#ffffff"
-                startOnView={true}
-              />
-            </h1>
+              <p className="text-[13px] md:text-[17px] text-muted-foreground/60 leading-relaxed max-w-xl mx-auto mb-10 font-medium tracking-wide px-2">
+                Access 150+ LLMs through a single endpoint. Route across OpenAI, Anthropic, Google, and more — no client changes needed.
+              </p>
 
-            <p className="text-[13px] md:text-[17px] text-muted-foreground/60 leading-relaxed max-w-xl mx-auto mb-12 font-medium tracking-wide">
-              Access 150+ LLMs through a single endpoint. Route across OpenAI, Anthropic, Google, and more — no client changes needed.
-            </p>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center w-full sm:w-auto">
+                <Link href="/dashboard" className="w-full sm:w-auto h-12 px-7 rounded-xl bg-white text-black flex items-center justify-center font-bold text-[13px] hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-xl shadow-white/5 group">
+                  Get started
+                  <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" strokeWidth={2.5} />
+                </Link>
 
-            <div className="flex flex-wrap gap-4 items-center justify-center">
-              <Link href="/dashboard" className="h-12 px-7 rounded-xl bg-white text-black flex items-center justify-center font-bold text-[13px] hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-xl shadow-white/5 group">
-                Get started
-                <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" strokeWidth={2.5} />
-              </Link>
-
-              <button
-                className="h-12 px-6 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-mono text-[13px] text-white/60 hover:bg-white/10 hover:border-white/20 transition-all active:scale-[0.98]"
-                onClick={() => {
-                  navigator.clipboard.writeText('api.frenix.sh/v1');
-                  toast.success('Endpoint copied');
-                }}
-              >
-                <span className="mr-3">api.frenix.sh/v1</span>
-                <Copy size={14} strokeWidth={2} style={{ opacity: 0.4 }} />
-              </button>
-            </div>
-
-            {/* Partner Logos */}
-            <div className="mt-16 flex flex-wrap items-center justify-center gap-8 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-              <div className="flex items-center gap-2">
-                <OpenAIIcon size={18} />
-                <span className="text-[11px] font-bold tracking-tight">OpenAI</span>
+                <button
+                  className="w-full sm:w-auto h-12 px-6 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-mono text-[13px] text-white/60 hover:bg-white/10 hover:border-white/20 transition-all active:scale-[0.98]"
+                  onClick={() => {
+                    navigator.clipboard.writeText('api.frenix.sh/v1');
+                    toast.success('Endpoint copied');
+                  }}
+                >
+                  <span className="mr-3">api.frenix.sh/v1</span>
+                  <Copy size={14} strokeWidth={2} style={{ opacity: 0.4 }} />
+                </button>
               </div>
-              <div className="flex items-center gap-2">
-                <AnthropicIcon size={18} />
-                <span className="text-[11px] font-bold tracking-tight">Anthropic</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <GoogleIcon size={18} />
-                <span className="text-[11px] font-bold tracking-tight">Google</span>
+
+              {/* exa.ai — sole partner logo in hero */}
+              <div className="mt-14 flex flex-col items-center gap-3">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-white font-semibold">Powered alongside</span>
+                <a
+                  href="https://exa.ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="opacity-40 hover:opacity-90 transition-all duration-500 grayscale hover:grayscale-0 flex items-center gap-2"
+                  aria-label="exa.ai"
+                >
+                  <Exa size={28} />
+                  <span className="text-[13px] font-bold tracking-tight text-white">exa.ai</span>
+                </a>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <div className="section-divider" />
+        <div className="section-divider" />
 
-      {/* ── Why AI Gateway (Sticky Scroll) ─────────────────── */}
-      <RevealSection>
-        <section className="max-w-[1200px] mx-auto pt-40 px-6">
-          <div className="flex flex-col lg:flex-row gap-20">
-            {/* Left: Sticky Headline */}
-            <div className="lg:w-[35%] lg:sticky lg:top-[50%] lg:-translate-y-[50%] h-fit pr-10 overflow-visible">
-              <SplitText
-                text="Why AI Gateway?"
-                tag="h1"
-                className="text-5xl md:text-7xl font-black text-white uppercase leading-[0.85] tracking-wider"
-                style={{ fontFamily: "'Bebas Neue', sans-serif" }}
-                splitType="lines"
-                duration={0.6}
-                delay={100}
-                ease="expo.out"
-                from={{ y: 100, opacity: 0 }}
-                to={{ y: 0, opacity: 1 }}
-                textAlign="left"
-              />
-              <div className="mt-8 w-12 h-1 bg-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.5)]" />
-            </div>
-
-            {/* Right: Scrolling Content */}
-            <div className="lg:w-[65%] space-y-40 mb-20">
-              <div className="min-h-[70vh] flex flex-col justify-center text-left">
+        {/* ── Why AI Gateway (Sticky Scroll) ─────────────────── */}
+        <RevealSection>
+          <section className="max-w-[1200px] mx-auto pt-40 px-6">
+            <div className="flex flex-col lg:flex-row gap-20">
+              {/* Left: Sticky Headline */}
+              <div className="lg:w-[35%] lg:sticky lg:top-[50%] lg:-translate-y-[50%] h-fit pr-10 overflow-visible">
                 <SplitText
-                  text="We've heard all the reasons to not use an AI Gateway."
-                  tag="p"
-                  className="text-xl md:text-3xl text-white font-black leading-tight tracking-tight uppercase max-w-lg mb-8"
+                  text="Why AI Gateway?"
+                  tag="h1"
+                  className="text-5xl md:text-7xl font-black text-white uppercase leading-[0.85] tracking-wider"
+                  style={{ fontFamily: "'Bebas Neue', sans-serif" }}
                   splitType="lines"
                   duration={0.6}
+                  delay={100}
                   ease="expo.out"
                   from={{ y: 100, opacity: 0 }}
                   to={{ y: 0, opacity: 1 }}
                   textAlign="left"
                 />
-                <div className="text-muted-foreground/60">
-                  <SplitText
-                    text="It feels hacky. It's inaccessible. It's not performant. It's over-engineered. And historically, those were all true. But we like to imagine things as they could be, then build them. So, why should you use an AI gateway?"
-                    className="!text-lg md:!text-xl leading-relaxed font-medium !text-muted-foreground/60"
-                    delay={10}
-                    duration={0.6}
-                    splitType="lines"
-                    ease="expo.out"
-                    from={{ opacity: 0, y: 50 }}
-                    to={{ opacity: 1, y: 0 }}
-                    textAlign="left"
-                  />
-                </div>
+                <div className="mt-8 w-12 h-1 bg-blue-600 shadow-[0_0_20px_rgba(37,99,235,0.5)]" />
               </div>
 
-              {[
-                {
-                  title: "Unified Provider Access",
-                  desc: "Stop juggling 20+ different SDKs and authentication patterns. Frenix provides a single, standardized REST interface to every major LLM provider—OpenAI, Anthropic, Google, and beyond."
-                },
-                {
-                  title: "Instant Model Switching",
-                  desc: "Swap between models and providers with a single line of code. No more re-engineering your backend just to test the latest Claude or GPT release—just update the 'provider' parameter and go."
-                },
-                {
-                  title: "Resilient Failover Groups",
-                  desc: "Eliminate downtime caused by provider outages or rate limits. Define automatic fallback groups so that if your primary model fails, Frenix reroutes your request to a secondary provider instantly."
-                }
-              ].map((item, i) => (
-                <div key={i} className="min-h-[70vh] flex flex-col justify-center group border-l-2 border-white/5 pl-8 hover:border-white/20 transition-all duration-500">
+              {/* Right: Scrolling Content */}
+              <div className="lg:w-[65%] space-y-40 mb-20">
+                <div className="min-h-[70vh] flex flex-col justify-center text-left">
                   <SplitText
-                    text={item.title}
-                    tag="h3"
-                    className="text-xl md:text-3xl font-black text-blue-500 mb-6 group-hover:text-blue-400 transition-colors uppercase leading-tight tracking-wider"
-                    style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+                    text="We've heard all the reasons to not use an AI Gateway."
+                    tag="p"
+                    className="text-xl md:text-3xl text-white font-black leading-tight tracking-tight uppercase max-w-lg mb-8"
                     splitType="lines"
                     duration={0.6}
                     ease="expo.out"
@@ -698,99 +656,141 @@ export default function Home() {
                     to={{ y: 0, opacity: 1 }}
                     textAlign="left"
                   />
-                  <div className="text-muted-foreground/60 max-w-xl">
+                  <div className="text-muted-foreground/60">
                     <SplitText
-                      text={item.desc}
+                      text="It feels hacky. It's inaccessible. It's not performant. It's over-engineered. And historically, those were all true. But we like to imagine things as they could be, then build them. So, why should you use an AI gateway?"
                       className="!text-lg md:!text-xl leading-relaxed font-medium !text-muted-foreground/60"
                       delay={10}
                       duration={0.6}
                       splitType="lines"
                       ease="expo.out"
-                      from={{ opacity: 0, y: 40 }}
+                      from={{ opacity: 0, y: 50 }}
                       to={{ opacity: 1, y: 0 }}
                       textAlign="left"
                     />
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Subtle Blue Bottom Glow */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] h-64 bg-blue-600/10 blur-[120px] rounded-full pointer-events-none z-0" />
-        </section>
-      </RevealSection>
 
-      {/* ── Section 3: Disadvantages of Others (Horizontal Scroll) ────────────────── */}
-      <div className="relative overflow-visible">
-        <HorizontalScrollSection title="Legacy Issues">
-          {[
-            {
-              id: "01",
-              title: "Performance Budget Loss",
-              desc: "Significant loss of performance budget due to using CSS transforms and unoptimized layout calculations in legacy gateways."
-            },
-            {
-              id: "02",
-              title: "Inaccessibility",
-              desc: "Inaccessibility from no page search support and native scrollbar behaviors that users rely on for platform navigation."
-            },
-            {
-              id: "03",
-              title: "Import Bloat",
-              desc: "Non-negligible import costs (12.1kb - 24.34kb gzipped), adding unnecessary weight to your application bundle early on."
-            },
-            {
-              id: "04",
-              title: "Limited Animations",
-              desc: "Limited animation systems for complex, scroll-based interactions and high-density performance visualizations."
-            },
-            {
-              id: "05",
-              title: "Erasing Native APIs",
-              desc: "Erasing native APIs like Intersection-Observer, CSS Sticky, etc. during horizontal or complex scroll transitions."
-            }
-          ].map((item, i) => (
-            <div key={i} className="flex-shrink-0 w-[80vw] md:w-[60vw] lg:w-[40vw] h-[60vh] flex flex-col justify-center border-l border-white/10 pl-12 pr-12 group hover:bg-white/[0.01] transition-all duration-500 rounded-2xl mx-10">
-              <div className={cn(
-                "text-sm font-black mb-6 tracking-[0.5em] uppercase",
-                item.id === "04" ? "text-teal-400" : "text-blue-500"
-              )}>
-                {item.id}
+                {[
+                  {
+                    title: "Unified Provider Access",
+                    desc: "Stop juggling 20+ different SDKs and authentication patterns. Frenix provides a single, standardized REST interface to every major LLM provider—OpenAI, Anthropic, Google, and beyond."
+                  },
+                  {
+                    title: "Instant Model Switching",
+                    desc: "Swap between models and providers with a single line of code. No more re-engineering your backend just to test the latest Claude or GPT release—just update the 'provider' parameter and go."
+                  },
+                  {
+                    title: "Resilient Failover Groups",
+                    desc: "Eliminate downtime caused by provider outages or rate limits. Define automatic fallback groups so that if your primary model fails, Frenix reroutes your request to a secondary provider instantly."
+                  }
+                ].map((item, i) => (
+                  <div key={i} className="min-h-[70vh] flex flex-col justify-center group border-l-2 border-white/5 pl-8 hover:border-white/20 transition-all duration-500">
+                    <SplitText
+                      text={item.title}
+                      tag="h3"
+                      className="text-xl md:text-3xl font-black text-blue-500 mb-6 group-hover:text-blue-400 transition-colors uppercase leading-tight tracking-wider"
+                      style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+                      splitType="lines"
+                      duration={0.6}
+                      ease="expo.out"
+                      from={{ y: 100, opacity: 0 }}
+                      to={{ y: 0, opacity: 1 }}
+                      textAlign="left"
+                    />
+                    <div className="text-muted-foreground/60 max-w-xl">
+                      <SplitText
+                        text={item.desc}
+                        className="!text-lg md:!text-xl leading-relaxed font-medium !text-muted-foreground/60"
+                        delay={10}
+                        duration={0.6}
+                        splitType="lines"
+                        ease="expo.out"
+                        from={{ opacity: 0, y: 40 }}
+                        to={{ opacity: 1, y: 0 }}
+                        textAlign="left"
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
-              <SplitText
-                text={item.title}
-                tag="h3"
-                className="text-2xl md:text-4xl font-black text-white/50 mb-8 group-hover:text-white transition-colors tracking-tight uppercase leading-none"
-                splitType="lines"
-                duration={0.6}
-                ease="expo.out"
-                from={{ y: 100, opacity: 0 }}
-                to={{ y: 0, opacity: 1 }}
-                textAlign="left"
-              />
-              <div className="text-muted-foreground/40 max-w-lg">
+            </div>
+
+            {/* Subtle Blue Bottom Glow */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] h-64 bg-blue-600/10 blur-[120px] rounded-full pointer-events-none z-0" />
+          </section>
+        </RevealSection>
+
+        {/* ── Section 3: Disadvantages of Others (Horizontal Scroll) ────────────────── */}
+        <div className="relative overflow-visible">
+          <HorizontalScrollSection title="Legacy Issues">
+            {[
+              {
+                id: "01",
+                title: "Performance Budget Loss",
+                desc: "Significant loss of performance budget due to using CSS transforms and unoptimized layout calculations in legacy gateways."
+              },
+              {
+                id: "02",
+                title: "Inaccessibility",
+                desc: "Inaccessibility from no page search support and native scrollbar behaviors that users rely on for platform navigation."
+              },
+              {
+                id: "03",
+                title: "Import Bloat",
+                desc: "Non-negligible import costs (12.1kb - 24.34kb gzipped), adding unnecessary weight to your application bundle early on."
+              },
+              {
+                id: "04",
+                title: "Limited Animations",
+                desc: "Limited animation systems for complex, scroll-based interactions and high-density performance visualizations."
+              },
+              {
+                id: "05",
+                title: "Erasing Native APIs",
+                desc: "Erasing native APIs like Intersection-Observer, CSS Sticky, etc. during horizontal or complex scroll transitions."
+              }
+            ].map((item, i) => (
+              <div key={i} className="flex-shrink-0 w-[80vw] md:w-[60vw] lg:w-[40vw] h-[60vh] flex flex-col justify-center border-l border-white/10 pl-12 pr-12 group hover:bg-white/[0.01] transition-all duration-500 rounded-2xl mx-10">
+                <div className={cn(
+                  "text-sm font-black mb-6 tracking-[0.5em] uppercase",
+                  item.id === "04" ? "text-teal-400" : "text-blue-500"
+                )}>
+                  {item.id}
+                </div>
                 <SplitText
-                  text={item.desc}
-                  className="!text-lg md:!text-xl leading-relaxed font-medium !text-muted-foreground/40"
-                  delay={10}
-                  duration={0.6}
+                  text={item.title}
+                  tag="h3"
+                  className="text-2xl md:text-4xl font-black text-white/50 mb-8 group-hover:text-white transition-colors tracking-tight uppercase leading-none"
                   splitType="lines"
+                  duration={0.6}
                   ease="expo.out"
-                  from={{ opacity: 0, y: 30 }}
-                  to={{ opacity: 1, y: 0 }}
+                  from={{ y: 100, opacity: 0 }}
+                  to={{ y: 0, opacity: 1 }}
                   textAlign="left"
                 />
+                <div className="text-muted-foreground/40 max-w-lg">
+                  <SplitText
+                    text={item.desc}
+                    className="!text-lg md:!text-xl leading-relaxed font-medium !text-muted-foreground/40"
+                    delay={10}
+                    duration={0.6}
+                    splitType="lines"
+                    ease="expo.out"
+                    from={{ opacity: 0, y: 30 }}
+                    to={{ opacity: 1, y: 0 }}
+                    textAlign="left"
+                  />
+                </div>
               </div>
-            </div>
-          ))}
-        </HorizontalScrollSection>
-        
-        {/* Final Blue Transition Glow */}
-        <div className="absolute bottom-0 left-0 w-full h-96 bg-gradient-to-t from-blue-900/20 to-transparent blur-[100px] pointer-events-none z-0" />
-      </div>
+            ))}
+          </HorizontalScrollSection>
 
-      {/* ── End Dark Sections Wrapper ── */}
+          {/* Final Blue Transition Glow */}
+          <div className="absolute bottom-0 left-0 w-full h-96 bg-gradient-to-t from-blue-900/20 to-transparent blur-[100px] pointer-events-none z-0" />
+        </div>
+
+        {/* ── End Dark Sections Wrapper ── */}
       </div>
 
       {/* ── Transition Target (White Mode) ── */}
@@ -828,26 +828,26 @@ export default function Home() {
                 description: "Access text, image, and video generation models. GPT-4, Claude, Gemini, DALL-E, Stable Diffusion, and more—all through one unified API.",
                 background: (
                   <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none opacity-100 mix-blend-multiply">
-                      <div className="relative size-full flex items-center justify-center -translate-y-6">
-                        {/* Logo in the center (Static) */}
-                        <div className="absolute size-24 rounded-full bg-black flex items-center justify-center z-20 shadow-2xl shadow-slate-300 border border-slate-800">
-                          <img src="/logo-withoutbg.png" alt="Frenix" className="size-14" />
-                        </div>
-                        
-                        {/* Inner Orbit */}
-                        <OrbitingCircles radius={120} duration={40} iconSize={28} className="border-slate-300">
-                           <OpenAI size={28} color="#000" />
-                           <Meta size={28} color="#000" />
-                           <Google size={28} color="#000" />
-                        </OrbitingCircles>
-                        {/* Outer Orbit */}
-                        <OrbitingCircles radius={200} duration={40} reverse iconSize={32} angleOffset={45} className="border-slate-300">
-                           <Claude size={32} color="#000" />
-                           <Mistral size={32} color="#000" />
-                           <Grok size={32} color="#000" />
-                           <DeepSeek size={32} color="#000" />
-                        </OrbitingCircles>
+                    <div className="relative size-full flex items-center justify-center -translate-y-6">
+                      {/* Logo in the center (Static) */}
+                      <div className="absolute size-24 rounded-full bg-black flex items-center justify-center z-20 shadow-2xl shadow-slate-300 border border-slate-800">
+                        <img src="/logo-withoutbg.png" alt="Frenix" className="size-14" />
                       </div>
+
+                      {/* Inner Orbit */}
+                      <OrbitingCircles radius={120} duration={40} iconSize={28} className="border-slate-300">
+                        <OpenAI size={28} color="#000" />
+                        <Meta size={28} color="#000" />
+                        <Google size={28} color="#000" />
+                      </OrbitingCircles>
+                      {/* Outer Orbit */}
+                      <OrbitingCircles radius={200} duration={40} reverse iconSize={32} angleOffset={45} className="border-slate-300">
+                        <Claude size={32} color="#000" />
+                        <Mistral size={32} color="#000" />
+                        <Grok size={32} color="#000" />
+                        <DeepSeek size={32} color="#000" />
+                      </OrbitingCircles>
+                    </div>
                   </div>
                 ),
                 className: "lg:col-span-1 lg:row-span-2 bg-slate-50 border-slate-200 text-slate-900",
@@ -921,32 +921,25 @@ export default function Home() {
         </section>
 
         {/* ── CTA (White Mode) ── */}
-        <section className="max-w-[1200px] mx-auto pb-32 px-6">
-          <div className="px-8 md:px-16 py-16 md:py-20 bg-black text-white rounded-[40px] flex flex-col lg:flex-row items-center justify-between gap-12 relative overflow-hidden group shadow-2xl shadow-slate-200">
-            <div className="text-center lg:text-left relative z-10 max-w-xl">
-              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tighter mb-6 leading-[1.1]">
+        <section className="max-w-[1200px] mx-auto pb-32 px-4 sm:px-6">
+          <div className="px-8 md:px-16 py-16 md:py-24 bg-black text-white rounded-[40px] flex flex-col lg:flex-row items-center justify-start relative overflow-hidden group shadow-2xl shadow-purple-900/20 border border-white/5">
+            <div className="text-center lg:text-left relative z-10 max-w-xl w-full">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter leading-[1.05] text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 drop-shadow-2xl">
                 Ship faster with one unified API.
               </h2>
-              <p className="text-white/60 text-sm md:text-lg font-medium leading-relaxed max-w-md">
-                Stop managing multiple provider SDKs. Swap your base URL to Frenix and get access to every model from a single key.
-              </p>
 
-              <div className="mt-8 flex items-center gap-4 border-t border-white/10 pt-8">
-                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center font-black text-[10px] text-white/40">FT</div>
-                <div className="flex flex-col text-left">
-                  <span className="text-[11px] font-black uppercase tracking-widest leading-none">Frenix Engineering</span>
-                  <span className="text-[10px] font-bold text-white/40 uppercase mt-1">Infrastructure Authority</span>
-                </div>
+              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center lg:justify-start relative z-10 mt-10">
+                <Link href="/dashboard" className="h-14 px-10 bg-white text-black rounded-2xl flex items-center justify-center font-bold text-sm tracking-widest uppercase hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl">
+                  Get started <ArrowRight size={18} className="ml-2" />
+                </Link>
+                <Link href="/docs" className="h-14 px-8 border border-white/20 bg-black/40 backdrop-blur-md rounded-2xl flex items-center justify-center font-bold text-sm text-white hover:bg-black/60 transition-colors shadow-xl">
+                  <Terminal size={18} className="mr-2" /> Docs
+                </Link>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto relative z-10">
-              <Link href="/dashboard" className="h-14 px-10 bg-white text-black rounded-2xl flex items-center justify-center font-bold text-sm tracking-widest uppercase hover:scale-[1.02] active:scale-[0.98] transition-all">
-                Get started <ArrowRight size={18} className="ml-2" />
-              </Link>
-              <Link href="/docs" className="h-14 px-8 border border-white/20 rounded-2xl flex items-center justify-center font-bold text-sm hover:bg-white/5 transition-colors">
-                <Terminal size={18} className="mr-2" /> Docs
-              </Link>
+            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden rounded-[40px]">
+              <RiveIllustration />
             </div>
           </div>
         </section>

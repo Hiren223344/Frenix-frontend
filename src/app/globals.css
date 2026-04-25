@@ -142,8 +142,9 @@ body {
 
 body {
   color: var(--text-main);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Ranade', 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  font-weight: 300;
 }
 
 h1,
@@ -153,9 +154,10 @@ h4,
 h5,
 h6 {
   color: var(--text-main);
-  font-family: var(--font-bebas);
+  font-family: 'Ranade', var(--font-bebas);
   -webkit-font-smoothing: antialiased;
   letter-spacing: 0.05em !important;
+  font-weight: 400;
 }
 
 a {
@@ -212,8 +214,8 @@ a {
   border: none;
   padding: 11px 26px;
   border-radius: 10px;
-  font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-family: 'Ranade', sans-serif;
   cursor: pointer;
   font-size: 15px;
   display: inline-flex;
@@ -239,8 +241,8 @@ a {
   border: 1px solid var(--border);
   padding: 11px 26px;
   border-radius: 10px;
-  font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-family: 'Ranade', sans-serif;
   cursor: pointer;
   font-size: 14px;
   display: inline-flex;
@@ -314,7 +316,7 @@ a {
 
 .page-header h1 {
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: -0.5px;
   margin-bottom: 4px;
   color: var(--text-main);
@@ -342,7 +344,7 @@ a {
 
 .stat-value {
   font-size: 28px;
-  font-weight: 700;
+  font-weight: 400;
   margin: 8px 0 4px;
   letter-spacing: -1px;
   color: var(--text-main);
@@ -356,7 +358,7 @@ a {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1.2px;
-  font-weight: 600;
+  font-weight: 300;
 }
 
 .stat-change-up {

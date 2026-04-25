@@ -28,6 +28,10 @@ import {
 import CountUp from '@/components/ui/CountUp';
 import { motion, AnimatePresence } from 'framer-motion';
 import { decrypt } from '@/lib/encryption';
+import dynamic from 'next/dynamic';
+
+const DashboardTipCard = dynamic(() => import('@/components/ui/DashboardTipCard'), { ssr: false });
+const FloatingAssistant = dynamic(() => import('@/components/ui/FloatingAssistant'), { ssr: false });
 
 // --- Advanced Motion Graphics Components ---
 
@@ -284,7 +288,7 @@ export default function Dashboard() {
 
                 {/* Main Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatCard label="Total Traffic" value={stats.stats.totalRequests || 0} icon={<Activity size={16} />} sub={`${stats.stats.failedRequests || 0} failed requests`} trend="+12%" />
+                    <DashboardTipCard totalRequests={stats.stats.totalRequests || 0} />
                     <StatCard label="Token Volume" value={stats.stats.tokens?.total || 0} icon={<Coins size={16} />} sub="Prompt + Completion" />
                     <StatCard label="Operational Cost" value={`$${(stats.stats.totalCostUsd || 0).toFixed(4)}`} icon={<DollarSign size={16} />} sub="Estimated USD Billing" />
                     <StatCard label="Success Rate" value={`${(( (stats.stats.totalRequests - stats.stats.failedRequests) / stats.stats.totalRequests ) * 100 || 100).toFixed(1)}%`} icon={<Zap size={16} />} sub="Upstream Stability" />
@@ -389,6 +393,7 @@ export default function Dashboard() {
                     <span>Frenix Infrastructure Group</span>
                 </div>
             </div>
+
 
             <style jsx global>{`
                 .glass-card {

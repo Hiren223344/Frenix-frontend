@@ -127,14 +127,9 @@ export function Header({ links, user, onSignOut }: HeaderProps) {
                     {user ? (
                         <UserDropdown user={user} onSignOut={onSignOut} />
                     ) : (
-                        <>
-                            <Link href="/signin">
-                                <Button variant="outline" size="sm" className="text-xs h-8 px-3">Sign In</Button>
-                            </Link>
-                            <Link href="/signin">
-                                <Button size="sm" className="text-xs h-8 px-3 ml-1">Get Started</Button>
-                            </Link>
-                        </>
+                        <Link href="/signin">
+                            <Button size="sm" className="text-xs h-8 px-3 ml-1">Get Started</Button>
+                        </Link>
                     )}
                 </div>
                 <Button size="icon" variant="ghost" onClick={() => setOpen(!open)} className="md:hidden h-9 w-9 -mr-2">
@@ -235,14 +230,9 @@ export function Header({ links, user, onSignOut }: HeaderProps) {
                                 <Icon icon="solar:logout-2-bold-duotone" className="mr-2 size-5" /> Sign Out
                             </Button>
                         ) : (
-                            <>
-                                <Link href="/signin" onClick={() => setOpen(false)}>
-                                    <Button variant="outline" className="w-full h-12 rounded-xl font-bold bg-white/5 border-white/10 hover:bg-white/10">Sign In</Button>
-                                </Link>
-                                <Link href="/signin" onClick={() => setOpen(false)}>
-                                    <Button className="w-full h-12 rounded-xl font-bold bg-primary text-primary-foreground hover:opacity-90">Get Started</Button>
-                                </Link>
-                            </>
+                            <Link href="/signin" onClick={() => setOpen(false)}>
+                                <Button className="w-full h-12 rounded-xl font-bold bg-primary text-primary-foreground hover:opacity-90">Get Started</Button>
+                            </Link>
                         )}
                     </div>
                 </div>
