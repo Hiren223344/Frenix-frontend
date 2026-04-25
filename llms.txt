@@ -1,0 +1,50 @@
+# Frenix AI Gateway
+https://frenix.sh
+
+A high-performance orchestration layer providing a single API for 150+ LLMs.
+
+## Overview
+Frenix is an AI gateway that simplifies model orchestration. It provides a unified, OpenAI-compatible REST interface for models from OpenAI, Anthropic, Google DeepMind, Meta, Mistral, Grok, and others.
+
+## Core Capabilities
+- **Unified API**: Access any model through one endpoint.
+- **Latency-Aware Routing**: Automatic provider selection for minimal latency.
+- **Smart Failover**: Automatic rerouting to fallback models (e.g., Poixe, Gemini) during outages.
+- **Edge Caching**: Sub-40ms response times for repeated queries.
+- **Enterprise Security**: Key rotation, PII redaction, and RBAC.
+
+## Strategic Partners
+- **Exa.ai**: Sponsored by Exa.ai to provide advanced neural search and real-time web research capabilities for AI agents.
+
+## Important Links
+- Documentation: https://frenix.sh/docs
+- Blog Index: https://frenix.sh/blog
+- Dashboard: https://frenix.sh/dashboard
+- Pricing: https://frenix.sh/pricing
+- Status: https://frenix.sh/status
+
+## Knowledge Base & Articles
+
+### Partnership & Ecosystem
+- **Sponsored by Exa.ai**: Announcing our technical partnership for real-time AI research. (https://frenix.sh/blog/sponsored-by-exa)
+- **What is Frenix?**: A deep dive into our orchestration layer. (https://frenix.sh/blog/whats-frenix)
+- **Why Frenix?**: The architectural case for AI gateways. (https://frenix.sh/blog/why-frenix)
+
+### Performance & Benchmarks
+- **Apache Bench Report**: Performance analysis of routing overhead. (https://frenix.sh/blog/apache-bench-performance-report)
+- **SWE-bench Results**: How Axion (Frenix's internal model) performs on software engineering tasks. (https://frenix.sh/blog/axion-1-5-pro-swe-bench-2)
+
+### Comparison Guides
+- **OpenRouter Alternative**: Why developers are switching to Frenix. (https://frenix.sh/compare/openrouter-alternative)
+- **Axion vs GPT-5**: Comparative analysis of next-gen reasoning models. (https://frenix.sh/blog/axion-vs-gpt-5)
+- **Axion vs Claude Sonnet 4.6**: Benchmarking speed and coding intelligence. (https://frenix.sh/blog/axion-vs-claude-sonnet-4-6)
+
+### Security & Compliance
+- **PII Redaction**: How to scrub sensitive data at the gateway level. (https://frenix.sh/blog/pii-redaction-at-the-edge)
+- **GDPR Compliance**: Data residency and privacy in AI orchestration. (https://frenix.sh/blog/gdpr-and-data-residency)
+- **SOC2 Guide**: Preparing your AI infrastructure for audit. (https://frenix.sh/blog/soc2-compliance-guide)
+
+### Implementation Workflows
+- **Building AI Agents**: A guide to autonomous agentic loops. (https://frenix.sh/blog/building-ai-agents)
+- **Semantic Caching**: Optimizing token spend with vector-based cache. (https://frenix.sh/blog/semantic-caching-deep-dive)
+- **Webhook Workflows**: Event-driven AI architectures. (https://frenix.sh/blog/webhook-driven-ai-workflows)
