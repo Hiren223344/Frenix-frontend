@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { useClerk, UserProfile } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
+import { useClerk } from "@clerk/nextjs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -34,7 +33,7 @@ const MENU_ITEMS = {
         { icon: "solar:card-line-duotone", label: "Billing", href: "/billing" },
     ],
     profile: [
-        { icon: "solar:user-circle-line-duotone", label: "Account Portal", action: "profile" },
+        { icon: "solar:user-circle-line-duotone", label: "Account Portal", href: "/user-profile" },
         { icon: "solar:bell-line-duotone", label: "Notifications", href: "#" }
     ],
     account: [
@@ -52,7 +51,6 @@ export const UserDropdown = ({
     const { openUserProfile } = useClerk();
     const router = useRouter();
     const [selectedStatus, setSelectedStatus] = React.useState("online");
-    const [showProfile, setShowProfile] = React.useState(false);
 
     const userData = {
         name: user?.fullName || user?.emailAddresses?.[0]?.emailAddress?.split('@')[0] || "User",
@@ -66,8 +64,6 @@ export const UserDropdown = ({
         console.log('Action triggered:', action, href);
         if (action === 'logout') {
             onSignOut?.();
-        } else if (action === 'profile') {
-            setShowProfile(true);
         } else if (href) {
             router.push(href);
         }
@@ -184,39 +180,6 @@ export const UserDropdown = ({
                     ))}
                 </DropdownMenuGroup>
             </DropdownMenuContent>
-
-            {/* Custom Clerk Profile Modal */}
-            {showProfile && (
-                <div 
-                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300"
-                    onClick={() => setShowProfile(false)}
-                >
-                    <div 
-                        className="relative w-full max-w-5xl max-h-[90vh] overflow-hidden rounded-xl shadow-2xl bg-[#111111] animate-in zoom-in-95 duration-300"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* Close Button */}
-                        <button 
-                            onClick={() => setShowProfile(false)}
-                            className="absolute top-6 right-6 z-[100] size-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                        >
-                            <Icon icon="solar:close-circle-line-duotone" className="size-5" />
-                        </button>
-                        
-                        <div className="w-full h-full overflow-y-auto no-scrollbar">
-                            <UserProfile 
-                                appearance={{
-                                    baseTheme: dark,
-                                    elements: {
-                                        rootBox: "w-full h-full",
-                                        card: "shadow-none border-none w-full max-w-full rounded-none",
-                                    }
-                                }}
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
         </DropdownMenu>
     );
 };

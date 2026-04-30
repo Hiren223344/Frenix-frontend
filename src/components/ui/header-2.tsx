@@ -6,8 +6,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { MenuToggleIcon } from '@/components/ui/menu-toggle-icon';
 import { useScroll } from '@/components/ui/use-scroll';
-import { useUser, useClerk, UserProfile } from '@clerk/nextjs';
-import { dark } from "@clerk/themes";
+import { useUser, useClerk } from '@clerk/nextjs';
 import { UserDropdown } from '@/components/ui/user-dropdown';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -27,7 +26,6 @@ export function Header({ links, onSignOut }: HeaderProps) {
     const [open, setOpen] = React.useState(false);
     const scrolled = useScroll(10);
     const pathname = usePathname();
-    const [showProfile, setShowProfile] = React.useState(false);
     const { user: clerkUser, isSignedIn, isLoaded } = useUser();
     const { signOut, openUserProfile, redirectToSignIn } = useClerk();
 
@@ -207,9 +205,7 @@ export function Header({ links, onSignOut }: HeaderProps) {
                                 { icon: 'solar:widget-line-duotone', label: 'Dashboard', href: '/dashboard' },
                                 { icon: 'solar:key-line-duotone', label: 'API Keys', href: '/api-keys' },
                                 { icon: 'solar:card-line-duotone', label: 'Billing', href: '/billing' },
-                                { icon: 'solar:user-circle-line-duotone', label: 'Account', action: () => {
-                                    setShowProfile(true);
-                                }},
+                                { icon: 'solar:user-circle-line-duotone', label: 'Account', href: '/user-profile' },
                             ].map((item) => {
                                 if ('href' in item && item.href) {
                                     return (
@@ -262,38 +258,6 @@ export function Header({ links, onSignOut }: HeaderProps) {
                     </div>
                 </div>
             </div>
-
-            {/* Mobile/Global Clerk Profile Modal */}
-            {showProfile && (
-                <div 
-                    className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300"
-                    onClick={() => setShowProfile(false)}
-                >
-                    <div 
-                        className="relative w-full max-w-5xl max-h-[90vh] overflow-hidden rounded-xl shadow-2xl bg-[#111111] animate-in zoom-in-95 duration-300"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <button 
-                            onClick={() => setShowProfile(false)}
-                            className="absolute top-6 right-6 z-[100] size-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                        >
-                            <Icon icon="solar:close-circle-line-duotone" className="size-5" />
-                        </button>
-                        
-                        <div className="w-full h-full overflow-y-auto no-scrollbar">
-                            <UserProfile 
-                                appearance={{
-                                    baseTheme: dark,
-                                    elements: {
-                                        rootBox: "w-full h-full",
-                                        card: "shadow-none border-none w-full max-w-full rounded-none",
-                                    }
-                                }}
-                            />
-                        </div>
-                    </div>
-                </div>
-            )}
         </header>
     );
 }
