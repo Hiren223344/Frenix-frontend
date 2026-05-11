@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { adminFetchUsers, adminUpgradeUser } from '@/lib/gateway';
+import { adminFetchUsers, adminUpgradeUser, adminUpdateUserStatus } from '@/lib/gateway';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { 
@@ -100,6 +100,22 @@ export default function AdminDashboard() {
             toast.success(`Identity modified: ${tier} (30 Days)`);
         } catch (error: any) {
             toast.error('Modification failed: ' + error.message);
+        } finally {
+            setUpgrading(false);
+        }
+    };
+
+    const handleStatusToggle = async (userId: string, currentStatus: string) => {
+        if (!creds) return;
+        const newStatus = currentStatus === 'active' ? 'banned' : 'active';
+        try {
+            setUpgrading(true);
+            await adminUpdateUserStatus(creds, userId, newStatus);
+            await loadUsers(creds);
+            setSelectedUser(null);
+            toast.success(`Node status: ${newStatus.toUpperCase()}`);
+        } catch (error: any) {
+            toast.error('Status update failed: ' + error.message);
         } finally {
             setUpgrading(false);
         }
@@ -503,6 +519,25 @@ export default function AdminDashboard() {
                                     </button>
                                 ))}
                             </div>
+
+                            <div className="mb-8">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted opacity-50 mb-3 block">Access Control</label>
+                                <button
+                                    disabled={upgrading}
+                                    onClick={() => handleStatusToggle(selectedUser.id, selectedUser.status)}
+                                    className={`w-full p-4 rounded-2xl border flex items-center justify-between transition-all ${
+                                        selectedUser.status === 'active'
+                                        ? 'bg-error-bg/10 border-error-border/30 text-error-text hover:bg-error-bg/20'
+                                        : 'bg-success-bg/10 border-success-border/30 text-success-text hover:bg-success-bg/20'
+                                    }`}
+                                >
+                                    <span className="font-black text-sm tracking-wide">
+                                        {selectedUser.status === 'active' ? 'BAN USER' : 'UNBAN USER'}
+                                    </span>
+                                    <div className={`size-2 rounded-full ${selectedUser.status === 'active' ? 'bg-error-text' : 'bg-success-text'} animate-pulse`} />
+                                </button>
+                            </div>
+
                             
                             <button 
                                 onClick={() => setSelectedUser(null)}
