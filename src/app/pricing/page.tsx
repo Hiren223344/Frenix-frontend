@@ -11,13 +11,13 @@ import {
     Globe, 
     Cpu, 
     BarChart3, 
-    Infinity,
     ChevronDown,
     Lock,
     Sparkles,
     Terminal,
     Rocket
 } from 'lucide-react';
+
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
