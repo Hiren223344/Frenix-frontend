@@ -33,9 +33,10 @@ export interface GatewayStats {
             embeddings: number;
             moderations: number;
         };
-        modelsUsed: Record<string, number>;
-        providersUsed: Record<string, number>;
-        endpointsUsed: Record<string, number>;
+        modelsUsed: Record<string, { requests: number; tokens: number } | number>;
+        providersUsed: Record<string, { requests: number; tokens: number } | number>;
+        endpointsUsed: Record<string, { requests: number } | number>;
+
     };
 }
 

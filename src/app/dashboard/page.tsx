@@ -214,40 +214,92 @@ export default function Dashboard() {
         if (noKey && user) handleAutoCreateKey(user);
     }, [noKey, user]);
 
-    if (loading && !noKey && !stats) return <DashboardSkeleton />;
-
-    if (noKey || creatingKey) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
-                <RefreshCw size={32} className="animate-spin text-primary/40" />
-                <h2 className="text-xl font-bold font-black uppercase tracking-tighter">Initializing Node</h2>
-                <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest opacity-40">Securing your orchestration node...</p>
-            </div>
-        );
-    }
+    if (loading && !noKey && !stats && !error) return <DashboardSkeleton />;
 
     if (error && !stats) {
         return (
             <div className="dashboard-container max-w-xl mx-auto py-24 px-6 text-center">
-                <div className="glass-card p-10 space-y-4 border-rose-500/20">
+                <div className="glass-card p-10 space-y-4 border-rose-500/20 bg-rose-500/5 rounded-3xl backdrop-blur-xl">
                     <AlertCircle size={40} className="mx-auto text-rose-500/50" />
-                    <h2 className="text-xl font-bold">Connection Failed</h2>
-                    <p className="text-sm text-muted-foreground mb-6 font-mono text-xs">{error}</p>
-                    <button 
-                        onClick={() => loadData()}
-                        className="px-6 py-2 bg-primary/20 hover:bg-primary/30 rounded-xl text-primary font-bold text-xs transition-all uppercase tracking-widest"
-                    >
-                        Retry Connection
-                    </button>
+                    <h2 className="text-xl font-bold tracking-tight">Connectivity Interrupted</h2>
+                    <p className="text-sm text-muted-foreground mb-6 font-mono text-xs opacity-70">{error}</p>
+                    <div className="flex flex-col gap-3">
+                        <button 
+                            onClick={() => {
+                                setError('');
+                                loadData();
+                            }}
+                            className="w-full px-6 py-3 bg-primary/20 hover:bg-primary/30 rounded-xl text-primary font-bold text-xs transition-all uppercase tracking-widest border border-primary/20"
+                        >
+                            Retry Connection
+                        </button>
+                        <button 
+                            onClick={() => {
+                                setNoKey(false);
+                                setCreatingKey(false);
+                                setError('');
+                                loadData();
+                            }}
+                            className="w-full px-6 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-muted-foreground font-bold text-xs transition-all uppercase tracking-widest border border-white/5"
+                        >
+                            Reset Node State
+                        </button>
+                    </div>
                 </div>
             </div>
         );
     }
 
+    if (noKey || creatingKey) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[80vh] text-center space-y-8 animate-in fade-in zoom-in duration-700">
+                <div className="relative">
+                    <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full animate-pulse" />
+                    <RefreshCw size={48} className="animate-spin text-primary relative z-10" />
+                </div>
+                <div className="space-y-2">
+                    <h2 className="text-2xl font-black uppercase tracking-[0.2em] text-white">Initializing Node</h2>
+                    <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-[0.3em] opacity-40">Securing your orchestration identity...</p>
+                </div>
+                
+                {creatingKey && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-widest text-primary/60"
+                    >
+                        Provisioning Gateway Access
+                    </motion.div>
+                )}
+
+                <button 
+                    onClick={() => {
+                        setNoKey(false);
+                        setCreatingKey(false);
+                        loadData();
+                    }}
+                    className="mt-8 px-6 py-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 hover:text-primary transition-colors"
+                >
+                    Taking too long? Force Reload
+                </button>
+            </div>
+        );
+    }
+
+
     if (!stats) return null;
 
-    const models = Object.entries(stats.stats.modelsUsed || {}).sort((a, b) => (b[1] as number) - (a[1] as number)).slice(0, 10);
-    const totalModelCalls = Object.values(stats.stats.modelsUsed || {}).reduce((a: number, b: any) => a + (b as number), 0);
+    const modelsUsed = stats.stats.modelsUsed || {};
+    const models = Object.entries(modelsUsed)
+        .map(([name, data]: [string, any]) => ({
+            name,
+            count: typeof data === 'object' ? (data.requests || 0) : (data || 0)
+        }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10);
+
+    const totalModelCalls = models.reduce((a, b) => a + b.count, 0);
+
 
     return (
         <div className="min-h-screen">
@@ -312,9 +364,10 @@ export default function Dashboard() {
                         {models.length > 0 ? (
                             <div className="pt-2 space-y-6">
                                 <AnimatePresence mode="popLayout">
-                                    {models.map(([name, count], i) => (
-                                        <UsageBar key={name} name={name} count={count as number} total={totalModelCalls} index={i} />
+                                    {models.map((model, i) => (
+                                        <UsageBar key={model.name} name={model.name} count={model.count} total={totalModelCalls} index={i} />
                                     ))}
+
                                 </AnimatePresence>
                             </div>
                         ) : (
