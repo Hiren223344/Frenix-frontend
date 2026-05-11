@@ -30,7 +30,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
         { label: 'Dashboard', href: '/dashboard' },
         { label: 'Models', href: '/models' },
         { label: 'Status', href: 'https://status.frenix.sh' },
-        { label: 'Pricing', href: '/#pricing' },
+        { label: 'Pricing', href: '/pricing' },
         { label: 'Blog', href: '/blog' },
     ];
 
@@ -79,7 +79,7 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
                         <div className="flex flex-col gap-4">
                             <span className="text-slate-900 mb-2">Product</span>
                             <Link href="/blog" className="hover:text-blue-600 transition-colors">Blog</Link>
-                            <Link href="/#pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
+                            <Link href="/pricing" className="hover:text-blue-600 transition-colors">Pricing</Link>
                             <Link href="/dashboard" className="hover:text-blue-600 transition-colors">Dashboard</Link>
                             <Link href="/api-keys" className="hover:text-blue-600 transition-colors">API Keys</Link>
                             <Link href="/docs" className="hover:text-blue-600 transition-colors">Documentation</Link>
