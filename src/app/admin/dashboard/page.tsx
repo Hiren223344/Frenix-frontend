@@ -375,8 +375,10 @@ export default function AdminDashboard() {
                                                         {visibleColumns.includes('tier') && (
                                                             <td className="px-6 py-5">
                                                                 <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border ${
-                                                                    user.tier === 'pro' ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' : 
+                                                                    user.tier === 'pro' ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' :
                                                                     user.tier === 'enterprise' ? 'bg-purple-500/10 text-purple-600 border-purple-500/20' :
+                                                                    user.tier === 'free_unlimited' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' :
+                                                                    user.tier === 'evolvex' ? 'bg-amber-500/10 text-amber-600 border-amber-500/20' :
                                                                     'bg-bg-soft text-text-muted border-border'
                                                                 }`}>
                                                                     {user.tier}
@@ -457,8 +459,10 @@ export default function AdminDashboard() {
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-2">
                                                     <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest border ${
-                                                        user.tier === 'pro' ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' : 
+                                                        user.tier === 'pro' ? 'bg-blue-500/10 text-blue-600 border-blue-500/20' :
                                                         user.tier === 'enterprise' ? 'bg-purple-500/10 text-purple-600 border-purple-500/20' :
+                                                        user.tier === 'free_unlimited' ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' :
+                                                        user.tier === 'evolvex' ? 'bg-amber-500/10 text-amber-600 border-amber-500/20' :
                                                         'bg-bg-soft text-text-muted border-border'
                                                     }`}>
                                                         {user.tier}
@@ -503,19 +507,25 @@ export default function AdminDashboard() {
                             <p className="text-text-muted text-xs mb-8 font-medium">Reconfiguring node: {selectedUser.email || selectedUser.id.slice(0, 10)}</p>
                             
                             <div className="space-y-2 mb-8">
-                                {['free', 'pro', 'enterprise', 'evolvex'].map((t) => (
+                                {[
+                                    { id: 'free', label: 'Free' },
+                                    { id: 'free_unlimited', label: 'Free Unlimited' },
+                                    { id: 'pro', label: 'Pro' },
+                                    { id: 'enterprise', label: 'Enterprise' },
+                                    { id: 'evolvex', label: 'Evolvex' },
+                                ].map((t) => (
                                     <button
-                                        key={t}
-                                        disabled={upgrading || selectedUser.tier === t}
-                                        onClick={() => handleUpgrade(selectedUser.id, t)}
+                                        key={t.id}
+                                        disabled={upgrading || selectedUser.tier === t.id}
+                                        onClick={() => handleUpgrade(selectedUser.id, t.id)}
                                         className={`w-full p-4 rounded-2xl border flex items-center justify-between transition-all ${
-                                            selectedUser.tier === t 
+                                            selectedUser.tier === t.id
                                             ? 'bg-bg-soft border-border text-text-muted cursor-not-allowed opacity-50'
                                             : 'bg-bg-soft/70 border-border hover:border-primary hover:bg-primary/5 text-text-main active:scale-[0.98]'
                                         }`}
                                     >
-                                        <span className="capitalize font-black text-sm tracking-wide">{t}</span>
-                                        {selectedUser.tier === t && <span className="text-[9px] uppercase font-black opacity-30">Active</span>}
+                                        <span className="font-black text-sm tracking-wide">{t.label}</span>
+                                        {selectedUser.tier === t.id && <span className="text-[9px] uppercase font-black opacity-30">Active</span>}
                                     </button>
                                 ))}
                             </div>
