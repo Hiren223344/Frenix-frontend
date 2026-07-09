@@ -99,6 +99,51 @@ export async function fetchStatsByEmail(email: string): Promise<GatewayStats | a
     return data;
 }
 
+// ─── Fetch request logs for a key ────────────────────────────────────────────
+
+export interface GatewayLogEntry {
+    user_id: string;
+    api_key_id: string;
+    ip_address: string;
+    provider: string;
+    model: string;
+    status_code: number;
+    latency_ms: number;
+    tokens_in: number;
+    tokens_out: number;
+    error_message: string;
+    created_at: string;
+}
+
+export interface GatewayLogsResponse {
+    logs: GatewayLogEntry[];
+    page?: number;
+    limit?: number;
+}
+
+export async function fetchLogs(
+    apiKey: string,
+    { limit = 100, page = 1 }: { limit?: number; page?: number } = {},
+): Promise<GatewayLogsResponse> {
+    const url = new URL(`${BASE}/logs`);
+    url.searchParams.set('limit', String(limit));
+    url.searchParams.set('page', String(page));
+
+    const res = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${apiKey}` },
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw Object.assign(new Error(body.message || `HTTP ${res.status}`), {
+            status: res.status,
+        });
+    }
+
+    return res.json();
+}
+
 // ─── Create a new key for a user ─────────────────────────────────────────────
 
 export async function createGatewayKey(params: {

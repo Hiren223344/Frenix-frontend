@@ -1,8 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, ChevronDown, Filter, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Check, ChevronDown, Filter, RefreshCw, Search } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,88 +27,17 @@ type Filters = {
   status: string[];
 };
 
-const SAMPLE_LOGS: Log[] = [
-  {
-    id: "1",
-    timestamp: "2024-11-08T14:32:45Z",
-    level: "info",
-    service: "api-gateway",
-    message: "Request processed successfully",
-    duration: "245ms",
-    status: "200",
-    tags: ["api", "success"],
-  },
-  {
-    id: "2",
-    timestamp: "2024-11-08T14:32:42Z",
-    level: "warning",
-    service: "cache-service",
-    message: "Cache miss ratio exceeds threshold",
-    duration: "1.2s",
-    status: "warning",
-    tags: ["cache", "performance"],
-  },
-  {
-    id: "3",
-    timestamp: "2024-11-08T14:32:40Z",
-    level: "error",
-    service: "database",
-    message: "Connection timeout to replica",
-    duration: "5.1s",
-    status: "503",
-    tags: ["db", "error"],
-  },
-  {
-    id: "4",
-    timestamp: "2024-11-08T14:32:38Z",
-    level: "info",
-    service: "auth-service",
-    message: "User session created",
-    duration: "156ms",
-    status: "201",
-    tags: ["auth", "session"],
-  },
-  {
-    id: "5",
-    timestamp: "2024-11-08T14:32:35Z",
-    level: "info",
-    service: "api-gateway",
-    message: "Webhook delivered",
-    duration: "432ms",
-    status: "200",
-    tags: ["webhook", "integration"],
-  },
-  {
-    id: "6",
-    timestamp: "2024-11-08T14:32:32Z",
-    level: "error",
-    service: "payment-service",
-    message: "Payment gateway unavailable",
-    duration: "2.3s",
-    status: "502",
-    tags: ["payment", "error"],
-  },
-  {
-    id: "7",
-    timestamp: "2024-11-08T14:32:30Z",
-    level: "info",
-    service: "search-service",
-    message: "Index updated",
-    duration: "876ms",
-    status: "200",
-    tags: ["search", "index"],
-  },
-  {
-    id: "8",
-    timestamp: "2024-11-08T14:32:28Z",
-    level: "warning",
-    service: "api-gateway",
-    message: "Rate limit approaching",
-    duration: "145ms",
-    status: "429",
-    tags: ["rate-limit", "warning"],
-  },
-];
+interface GatewayLogEntry {
+  created_at: string;
+  status_code: number;
+  latency_ms: number;
+  tokens_in: number;
+  tokens_out: number;
+  provider: string;
+  model: string;
+  ip_address: string;
+  error_message: string;
+}
 
 const levelStyles: Record<LogLevel, string> = {
   info: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
@@ -125,6 +54,55 @@ const statusStyles: Record<string, string> = {
   warning: "text-yellow-600 dark:text-yellow-400",
 };
 
+function levelFromStatus(status: number): LogLevel {
+  if (status >= 500) return "error";
+  if (status >= 400) return "warning";
+  return "info";
+}
+
+function formatDuration(ms: number): string {
+  if (ms < 1000) return `${ms}ms`;
+  return `${(ms / 1000).toFixed(1)}s`;
+}
+
+function formatTimestamp(raw: string): string {
+  // Gateway emits "YYYY-MM-DD HH:mm:ss.SSS" (UTC). Make it ISO-parseable.
+  const iso = raw.includes("T") ? raw : raw.replace(" ", "T") + "Z";
+  return new Date(iso).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
+function mapLog(entry: GatewayLogEntry, index: number): Log {
+  const status = String(entry.status_code);
+  const level = levelFromStatus(entry.status_code);
+  const service =
+    [entry.provider, entry.model].filter(Boolean).join(" · ") || "gateway";
+  const tags = [
+    entry.model,
+    entry.provider,
+    entry.tokens_in || entry.tokens_out
+      ? `${entry.tokens_in}/${entry.tokens_out}`
+      : null,
+    entry.ip_address,
+  ]
+    .filter(Boolean)
+    .map(String);
+
+  return {
+    id: `${entry.created_at}-${index}`,
+    timestamp: entry.created_at,
+    level,
+    service,
+    message: entry.error_message || `${service} request ${status}`,
+    duration: formatDuration(entry.latency_ms),
+    status,
+    tags,
+  };
+}
+
 function LogRow({
   log,
   expanded,
@@ -134,12 +112,6 @@ function LogRow({
   expanded: boolean;
   onToggle: () => void;
 }) {
-  const formattedTime = new Date(log.timestamp).toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-
   return (
     <>
       <motion.button
@@ -164,7 +136,7 @@ function LogRow({
           </Badge>
 
           <time className="w-20 flex-shrink-0 font-mono text-xs text-muted-foreground">
-            {formattedTime}
+            {formatTimestamp(log.timestamp)}
           </time>
 
           <span className="flex-shrink-0 min-w-max text-sm font-medium text-foreground">
@@ -226,18 +198,20 @@ function LogRow({
                 </div>
               </div>
 
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Tags
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {log.tags.map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
+              {log.tags.length > 0 && (
+                <div>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Tags
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {log.tags.map((tag) => (
+                      <Badge key={tag} variant="outline" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -405,8 +379,42 @@ export function InteractiveLogsTable() {
     status: [],
   });
 
+  const [logs, setLogs] = useState<Log[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const loadLogs = useCallback(async (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/gateway/logs?limit=100", {
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      const entries: GatewayLogEntry[] = data.logs ?? [];
+      setLogs(entries.map(mapLog));
+    } catch (err: any) {
+      setError(err.message || "Failed to load logs");
+      setLogs([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadLogs();
+  }, [loadLogs]);
+
   const filteredLogs = useMemo(() => {
-    return SAMPLE_LOGS.filter((log) => {
+    return logs.filter((log) => {
       const lowerQuery = searchQuery.toLowerCase();
 
       const matchSearch =
@@ -422,7 +430,7 @@ export function InteractiveLogsTable() {
 
       return matchSearch && matchLevel && matchService && matchStatus;
     });
-  }, [filters, searchQuery]);
+  }, [filters, searchQuery, logs]);
 
   const activeFilters =
     filters.level.length + filters.service.length + filters.status.length;
@@ -435,7 +443,9 @@ export function InteractiveLogsTable() {
             <div>
               <h1 className="text-2xl font-semibold text-foreground">Logs</h1>
               <p className="text-sm text-muted-foreground">
-                {filteredLogs.length} of {SAMPLE_LOGS.length} logs
+                {loading
+                  ? "Loading logs…"
+                  : `${filteredLogs.length} of ${logs.length} logs`}
               </p>
             </div>
 
@@ -462,6 +472,17 @@ export function InteractiveLogsTable() {
                   </Badge>
                 )}
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => loadLogs(true)}
+                disabled={refreshing}
+                title="Refresh"
+              >
+                <RefreshCw
+                  className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+                />
+              </Button>
             </div>
           </div>
         </div>
@@ -480,52 +501,76 @@ export function InteractiveLogsTable() {
                 <FilterPanel
                   filters={filters}
                   onChange={setFilters}
-                  logs={SAMPLE_LOGS}
+                  logs={logs}
                 />
               </motion.div>
             )}
           </AnimatePresence>
 
           <div className="flex-1 overflow-y-auto">
-            <div className="divide-y divide-border">
-              <AnimatePresence mode="popLayout">
-                {filteredLogs.length > 0 ? (
-                  filteredLogs.map((log, index) => (
+            {error ? (
+              <div className="space-y-3 p-12 text-center">
+                <p className="text-red-600 dark:text-red-400">{error}</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => loadLogs(true)}
+                >
+                  Try again
+                </Button>
+              </div>
+            ) : (
+              <div className="divide-y divide-border">
+                <AnimatePresence mode="popLayout">
+                  {loading ? (
                     <motion.div
-                      key={log.id}
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{
-                        duration: 0.2,
-                        delay: index * 0.02,
-                      }}
+                      key="loading"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="p-12 text-center text-sm text-muted-foreground"
                     >
-                      <LogRow
-                        log={log}
-                        expanded={expandedId === log.id}
-                        onToggle={() =>
-                          setExpandedId((current) =>
-                            current === log.id ? null : log.id
-                          )
-                        }
-                      />
+                      Loading logs…
                     </motion.div>
-                  ))
-                ) : (
-                  <motion.div
-                    key="empty-state"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="p-12 text-center"
-                  >
-                    <p className="text-muted-foreground">
-                      No logs match your filters.
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                  ) : filteredLogs.length > 0 ? (
+                    filteredLogs.map((log, index) => (
+                      <motion.div
+                        key={log.id}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{
+                          duration: 0.2,
+                          delay: index * 0.02,
+                        }}
+                      >
+                        <LogRow
+                          log={log}
+                          expanded={expandedId === log.id}
+                          onToggle={() =>
+                            setExpandedId((current) =>
+                              current === log.id ? null : log.id
+                            )
+                          }
+                        />
+                      </motion.div>
+                    ))
+                  ) : (
+                    <motion.div
+                      key="empty-state"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="p-12 text-center"
+                    >
+                      <p className="text-muted-foreground">
+                        {logs.length === 0
+                          ? "No requests logged yet."
+                          : "No logs match your filters."}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
           </div>
         </div>
       </div>
