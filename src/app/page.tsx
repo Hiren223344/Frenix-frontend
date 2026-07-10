@@ -24,6 +24,7 @@ import Particles from "@/components/ui/Particles";
 import { DiaTextReveal } from "@/components/ui/dia-text-reveal";
 import SplitText from '@/components/ui/SplitText';
 import dynamic from 'next/dynamic';
+import WhatsNewPopup from '@/components/ui/WhatsNewPopup';
 
 const RiveIllustration = dynamic(() => import('@/components/ui/RiveIllustration'), { ssr: false });
 
@@ -535,6 +536,9 @@ export default function Home() {
         sparkCount={8}
         duration={400}
       />
+
+      {/* Dismissible "What's New" corner popup — fires once per version on load */}
+      <WhatsNewPopup />
 
       {/* ── Dark Sections Wrapper ── */}
       <div className="relative">
