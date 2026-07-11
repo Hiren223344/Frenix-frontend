@@ -2,397 +2,327 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import {
-    Search, Cpu, Image as ImageIcon, Music, Video as VideoIcon,
-    Binary, Info, ChevronRight, Zap, Copy, Check, Filter,
-    Globe, Shield, Activity, ChevronDown,
-    MessageSquare, FileText, Code2, LayoutGrid, List as ListIcon,
-    ArrowUpDown, Clock, BarChart3
+    Search, Activity, RefreshCw, Zap, CheckCircle2, AlertTriangle,
+    CircleDashed, Clock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-interface Model {
-    id: string;
-    object: string;
-    created: number;
-    owned_by: string;
+type ModelStatus = 'operational' | 'degraded' | 'no_data';
+
+interface ModelStat {
+    model: string;
+    successful: number;
+    unsuccessful: number;
+    successRate: number;
+    avgLatencyMs: number;
+    status: ModelStatus;
 }
 
-interface Pricing {
-    chat: Record<string, { prompt: number; completion: number }>;
-    images: Record<string, { per_image: number }>;
-    audio: Record<string, { per_character?: number; per_minute?: number }>;
-    embeddings: Record<string, { per_token: number }>;
-    videos: Record<string, { per_video: number }>;
-}
+const STATUS_LABEL: Record<ModelStatus, string> = {
+    operational: 'Operational',
+    degraded: 'Degraded',
+    no_data: 'No data',
+};
 
 export default function ModelsPage() {
-    const [models, setModels] = useState<Model[]>([]);
-    const [pricing, setPricing] = useState<Pricing | null>(null);
+    const [models, setModels] = useState<ModelStat[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
-    const [activeTab, setActiveTab] = useState('all');
-    const [copiedId, setCopiedId] = useState<string | null>(null);
-    const [visibleCount, setVisibleCount] = useState(30);
-    const [sortBy, setSortBy] = useState<'newest' | 'name' | 'provider'>('newest');
+    const [filter, setFilter] = useState<ModelStatus | 'all'>('all');
+    const [lastUpdated, setLastUpdated] = useState<string>('');
 
-    const gatewayUrl = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:3000';
+    const fetchData = async (silent = false) => {
+        if (!silent) setLoading(true);
+        try {
+            const res = await fetch('/api/gateway/models');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            const list: ModelStat[] = Array.isArray(data?.models) ? data.models : [];
+            setModels(list);
+            setLastUpdated(new Date().toLocaleTimeString());
+        } catch (error) {
+            console.error("Fetch error:", error);
+            if (!silent) toast.error("Couldn't load model stats");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        async function fetchData() {
-            setLoading(true);
-            try {
-                let normalizedUrl = gatewayUrl.replace(/\/$/, '');
-                if (!normalizedUrl.startsWith('http')) {
-                    normalizedUrl = `http://${normalizedUrl}`;
-                }
-
-                const [modelsRes, pricingRes] = await Promise.allSettled([
-                    fetch('https://api.frenix.sh/v1/models', {
-                        headers: { 'Authorization': 'Bearer frenix-models-status' }
-                    }),
-                    fetch(`${normalizedUrl}/v1/pricing`)
-                ]);
-
-                if (modelsRes.status === 'fulfilled' && modelsRes.value.ok) {
-                    const modelsData = await modelsRes.value.json();
-                    const rawModels = modelsData.data || [];
-                    const uniqueModels: Model[] = [];
-                    const seenIds = new Set();
-
-                    for (const m of rawModels) {
-                        if (!seenIds.has(m.id)) {
-                            seenIds.add(m.id);
-                            uniqueModels.push(m);
-                        }
-                    }
-                    setModels(uniqueModels);
-                }
-
-                if (pricingRes.status === 'fulfilled' && pricingRes.value.ok) {
-                    const pricingData = await pricingRes.value.json();
-                    setPricing(pricingData);
-                }
-            } catch (error) {
-                console.error("Fetch error:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
         fetchData();
-    }, [gatewayUrl]);
+        const interval = setInterval(() => fetchData(true), 30000);
+        return () => clearInterval(interval);
+    }, []);
 
-    const getCategory = (model: Model) => {
-        const id = model.id.toLowerCase();
-        if (pricing?.images[id] || model.object === 'image') return 'images';
-        if (pricing?.audio[id] || id.includes('whisper') || id.includes('tts')) return 'audio';
-        if (pricing?.videos[id] || model.object === 'video') return 'videos';
-        if (pricing?.embeddings[id] || id.includes('embedding')) return 'embeddings';
-        return 'chat';
-    };
-
-    const getPriceInfo = (model: Model) => {
-        const id = model.id;
-        const category = getCategory(model);
-
-        if (category === 'chat') {
-            const p = pricing?.chat[id] || pricing?.chat.default;
-            if (!p) return null;
-            return {
-                type: 'tokens',
-                input: (p.prompt * 1000000).toFixed(2),
-                output: (p.completion * 1000000).toFixed(2)
-            };
-        }
-        if (category === 'images') {
-            const p = pricing?.images[id];
-            if (!p) return null;
-            return { type: 'image', price: p.per_image.toFixed(3) };
-        }
-        if (category === 'videos') {
-            const p = pricing?.videos[id] || pricing?.videos.default;
-            if (!p) return null;
-            return { type: 'video', price: p.per_video.toFixed(2) };
-        }
-        if (category === 'audio') {
-            const p = pricing?.audio[id];
-            if (!p) return null;
-            if (p.per_character) return { type: 'audio-char', price: (p.per_character * 1000).toFixed(3) };
-            if (p.per_minute) return { type: 'audio-min', price: p.per_minute.toFixed(3) };
-        }
-        if (category === 'embeddings') {
-            const p = pricing?.embeddings[id] || pricing?.embeddings.default;
-            if (!p) return null;
-            return { type: 'embed', price: (p.per_token * 1000000).toFixed(4) };
-        }
-        return null;
-    };
-
-    const copyToClipboard = (text: string) => {
-        navigator.clipboard.writeText(text);
-        setCopiedId(text);
-        toast.success("Copied to clipboard");
-        setTimeout(() => setCopiedId(null), 2000);
-    };
+    const counts = useMemo(() => {
+        const operational = models.filter(m => m.status === 'operational').length;
+        const degraded = models.filter(m => m.status === 'degraded').length;
+        const total = models.length;
+        return { operational, degraded, total };
+    }, [models]);
 
     const filteredModels = useMemo(() => {
-        let res = models.filter(model => {
-            const matchesSearch = model.id.toLowerCase().includes(search.toLowerCase()) ||
-                model.owned_by.toLowerCase().includes(search.toLowerCase());
-            const category = getCategory(model);
-            const matchesTab = activeTab === 'all' || activeTab === category;
-            return matchesSearch && matchesTab;
-        });
-
-        if (sortBy === 'newest') res.sort((a, b) => b.created - a.created);
-        else if (sortBy === 'name') res.sort((a, b) => a.id.localeCompare(b.id));
-        else if (sortBy === 'provider') res.sort((a, b) => a.owned_by.localeCompare(b.owned_by));
-
-        return res;
-    }, [models, search, activeTab, sortBy]);
-
-    const displayedModels = filteredModels.slice(0, visibleCount);
+        const q = search.toLowerCase().trim();
+        return models
+            .filter(m => filter === 'all' || m.status === filter)
+            .filter(m => !q || m.model.toLowerCase().includes(q))
+            .sort((a, b) => {
+                // operational first, then degraded, then no_data; within, by success count desc
+                const order = { operational: 0, degraded: 1, no_data: 2 } as const;
+                if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status];
+                return b.successful - a.successful;
+            });
+    }, [models, search, filter]);
 
     return (
-        <div className="flex flex-col lg:flex-row h-[calc(100vh-56px)] bg-black text-white font-sans overflow-hidden">
-            {/* Left Sidebar */}
-            <aside className="hidden lg:flex w-[240px] border-r border-[#151515] flex-col pt-4 px-2 shrink-0 overflow-y-auto">
-                <div className="py-4 space-y-6">
-                    <section className="space-y-1">
-                        <header className="px-3 text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-2 flex items-center justify-between">
-                            Input Modalities
-                            <ChevronDown size={10} />
-                        </header>
-                        {[
-                            { id: 'chat', label: 'Text', icon: MessageSquare },
-                            { id: 'images', label: 'Image', icon: ImageIcon },
-                            { id: 'audio', label: 'Audio', icon: Music },
-                            { id: 'videos', label: 'Video', icon: VideoIcon, badge: 'New' }
-                        ].map(item => (
-                            <button
-                                key={item.label}
-                                onClick={() => setActiveTab(activeTab === item.id ? 'all' : item.id)}
-                                className={`w-full flex items-center justify-between px-3 py-2 rounded text-sm transition-colors ${activeTab === item.id ? 'bg-[#111] text-white' : 'text-zinc-500 hover:text-zinc-300 hover:bg-[#080808]'
-                                    }`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <item.icon size={16} />
-                                    {item.label}
-                                </div>
-                                {item.badge && <span className="text-[10px] bg-primary/20 text-primary px-1 rounded italic font-bold">{item.badge}</span>}
-                            </button>
-                        ))}
-                    </section>
-
-                    <section className="space-y-1">
-                        <header className="px-3 text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-2">Output Modalities</header>
-                        {[
-                            { id: 'chat', label: 'Text', icon: MessageSquare },
-                            { id: 'images', label: 'Image', icon: ImageIcon },
-                            { id: 'audio', label: 'Audio', icon: Music, badge: 'New' },
-                            { id: 'embeddings', label: 'Embeddings', icon: Binary }
-                        ].map(item => (
-                            <button
-                                key={item.label}
-                                className="w-full flex items-center justify-between px-3 py-2 rounded text-zinc-500 hover:text-zinc-300 transition-colors text-sm"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <item.icon size={16} />
-                                    {item.label}
-                                </div>
-                            </button>
-                        ))}
-                    </section>
-
-                    <section className="space-y-1 pt-4 border-t border-[#151515]">
-                        <div className="px-3 text-[12px] text-zinc-600 font-medium">
-                            <h4 className="flex items-center gap-2 mb-2"><Shield size={14} /> Enterprise</h4>
-                            <p className="text-[11px] leading-relaxed">Contact us for custom routing and private deployments.</p>
-                        </div>
-                    </section>
-                </div>
-            </aside>
-
-            {/* Main Content Area */}
-            <main className="flex-1 flex flex-col pt-4 overflow-y-auto no-scrollbar">
-                <div className="w-full px-4 sm:px-8 lg:px-12 py-4">
-                    {/* Top Header */}
-                    <div className="flex flex-col gap-6 mb-8">
-                        <div className="flex items-center justify-between">
-                            <h1 className="text-2xl font-bold">Models</h1>
-                            <div className="flex items-center gap-2">
-                                <button className="p-2 text-zinc-500 hover:text-white transition-colors bg-[#0a0a0a] border border-[#151515] rounded">
-                                    <LayoutGrid size={18} />
-                                </button>
-                                <button className="p-2 text-white bg-[#151515] border border-[#222] rounded">
-                                    <ListIcon size={18} />
-                                </button>
+        <div className="min-h-[calc(100vh-56px)] bg-black text-white font-sans">
+            <div className="w-full px-4 sm:px-8 lg:px-12 py-8 lg:py-12 max-w-[1400px] mx-auto">
+                {/* Header */}
+                <div className="flex flex-col gap-6 mb-10">
+                    <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+                        <div>
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="size-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-zinc-500">
+                                    Live model telemetry
+                                </span>
                             </div>
+                            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">Models</h1>
+                            <p className="text-sm text-zinc-500 mt-2 max-w-xl">
+                                Real-time availability and performance for every model on the Frenix gateway.
+                                {lastUpdated && (
+                                    <span className="text-zinc-600"> · Updated {lastUpdated}</span>
+                                )}
+                            </p>
                         </div>
-
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <div className="relative flex-1">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
-                                <input
-                                    type="text"
-                                    placeholder="Search models..."
-                                    className="w-full bg-[#080808] border border-[#151515] h-10 pl-10 pr-4 rounded text-sm outline-none focus:border-[#333] transition-colors"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                />
-                                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-zinc-700 bg-[#0a0a0a] border border-[#151515] px-1.5 rounded">/</div>
-                            </div>
-
-                            <div className="flex items-center gap-2">
-                                <button className="flex items-center gap-2 px-4 h-10 bg-[#080808] border border-[#151515] rounded text-sm text-zinc-400 hover:text-white transition-colors">
-                                    <ArrowUpDown size={14} /> Compare
-                                </button>
-                                <div className="relative">
-                                    <select
-                                        className="appearance-none h-10 pl-4 pr-10 bg-[#080808] border border-[#151515] rounded text-sm text-zinc-400 outline-none cursor-pointer hover:text-white transition-colors"
-                                        value={sortBy}
-                                        onChange={(e: any) => setSortBy(e.target.value)}
-                                    >
-                                        <option value="newest">Newest</option>
-                                        <option value="name">Name</option>
-                                        <option value="provider">Provider</option>
-                                    </select>
-                                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 pointer-events-none" size={14} />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-between text-xs text-zinc-500 font-medium">
-                            <span>{filteredModels.length} models</span>
-                            <div className="flex items-center gap-4">
-                                <button className="hover:text-zinc-300">By OpenRouter</button>
-                                <span className="opacity-20">|</span>
-                                <button className="hover:text-zinc-300" onClick={() => { setSearch(''); setActiveTab('all'); }}>Reset</button>
-                            </div>
-                        </div>
+                        <button
+                            onClick={() => fetchData()}
+                            className="self-start sm:self-auto flex items-center gap-2 px-4 h-10 bg-[#080808] border border-[#151515] rounded text-sm text-zinc-400 hover:text-white hover:border-[#222] transition-colors"
+                        >
+                            <RefreshCw size={14} className={cn(loading && "animate-spin")} />
+                            Refresh
+                        </button>
                     </div>
 
-                    {/* Model List Table-like Items */}
-                    <div className="flex flex-col border-t border-[#151515]">
-                        <AnimatePresence mode='popLayout'>
-                            {loading ? (
-                                Array.from({ length: 15 }).map((_, i) => (
-                                    <div key={i} className="py-6 border-b border-[#151515]">
-                                        <Skeleton className="h-5 w-48 bg-[#0a0a0a] mb-2" />
-                                        <Skeleton className="h-4 w-full bg-[#0a0a0a]" />
-                                    </div>
-                                ))
-                            ) : displayedModels.length === 0 ? (
-                                <div className="py-20 text-center">
-                                    <p className="text-zinc-500">No models found</p>
-                                </div>
-                            ) : (
-                                displayedModels.map((model) => {
-                                    const price = getPriceInfo(model);
-                                    return (
-                                        <motion.div
-                                            layout
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            key={model.id}
-                                            className="group py-4 border-b border-[#111] hover:bg-[#050505] transition-colors cursor-pointer relative"
-                                        >
-                                            <div className="flex items-center justify-between mb-2">
-                                                <div className="flex items-center gap-2 overflow-hidden">
-                                                    <h3 className="flex items-center gap-2 text-[15px] font-bold text-white group-hover:text-primary transition-colors truncate">
-                                                        <span>{model.owned_by}: {model.id.split('/').pop()}</span>
-                                                    </h3>
-                                                    <div className="w-4 h-4 rounded-full bg-[#111] border border-[#222] flex items-center justify-center">
-                                                        <Info size={10} className="text-zinc-600" />
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center gap-4 text-zinc-600 text-[11px] font-medium shrink-0">
-                                                    <span className="flex items-center gap-1"><Activity size={12} /> 1.8B tokens</span>
-                                                </div>
-                                            </div>
+                    {/* Summary tiles */}
+                    <div className="grid grid-cols-3 gap-3 sm:gap-4">
+                        <SummaryTile
+                            label="Total models"
+                            value={counts.total}
+                            icon={Activity}
+                            tone="default"
+                        />
+                        <SummaryTile
+                            label="Operational"
+                            value={counts.operational}
+                            icon={CheckCircle2}
+                            tone="operational"
+                        />
+                        <SummaryTile
+                            label="Degraded"
+                            value={counts.degraded}
+                            icon={AlertTriangle}
+                            tone={counts.degraded > 0 ? 'degraded' : 'default'}
+                        />
+                    </div>
 
-                                            <div
-                                                onClick={(e) => { e.stopPropagation(); copyToClipboard(model.id); }}
-                                                className="flex items-center gap-2 text-zinc-500 text-sm mb-4 line-clamp-1 hover:text-white transition-colors cursor-pointer group/id"
-                                            >
-                                                {model.id}
-                                                <Copy size={12} className="opacity-0 group-hover/id:opacity-100 transition-opacity" />
-                                            </div>
-
-                                            <div className="flex flex-wrap items-center gap-x-4 gap-y-3 md:gap-x-6 text-[10px] sm:text-[11px] font-bold text-zinc-600 uppercase tracking-wider">
-                                                <div className="flex items-center gap-1">
-                                                    <span className="truncate max-w-[100px] sm:max-w-none">By {model.owned_by.toLowerCase()}</span>
-                                                    <button onClick={(e) => { e.stopPropagation(); copyToClipboard(model.id); }}>
-                                                        {copiedId === model.id ? <Check size={10} className="text-green-500" /> : <Copy size={10} className="hover:text-white" />}
-                                                    </button>
-                                                </div>
-                                                <div className="hidden sm:block w-1 h-1 rounded-full bg-zinc-800" />
-                                                <span className="hidden sm:inline">{new Date(model.created * 1000).toLocaleDateString()}</span>
-                                                <div className="hidden sm:block w-1 h-1 rounded-full bg-zinc-800" />
-                                                <span>1M context</span>
-                                                <div className="w-1 h-1 rounded-full bg-zinc-800" />
-                                                {price ? (
-                                                    <div className="flex flex-wrap items-center gap-2">
-                                                        {price.type === 'tokens' ? (
-                                                            <>
-                                                                <span className="text-zinc-500 whitespace-nowrap">${price.input}/M <span className="text-zinc-800 italic">in</span></span>
-                                                                <div className="w-0.5 h-3 bg-zinc-800/40" />
-                                                                <span className="text-zinc-500 whitespace-nowrap">${price.output}/M <span className="text-zinc-800 italic">out</span></span>
-                                                            </>
-                                                        ) : (
-                                                            <span className="text-zinc-500">${price.price} / {price.type}</span>
-                                                        )}
-                                                    </div>
-                                                ) : <span className="text-primary italic">Inquiry for rates</span>}
-                                            </div>
-                                        </motion.div>
-                                    );
-                                })
-                            )}
-                        </AnimatePresence>
-
-                        {!loading && visibleCount < filteredModels.length && (
-                            <div className="py-12 flex justify-center">
+                    {/* Controls */}
+                    <div className="flex flex-col sm:flex-row gap-3">
+                        <div className="relative flex-1">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600" size={18} />
+                            <input
+                                type="text"
+                                placeholder="Search models..."
+                                className="w-full bg-[#080808] border border-[#151515] h-10 pl-10 pr-4 rounded text-sm outline-none focus:border-[#333] transition-colors"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                            {(['all', 'operational', 'degraded', 'no_data'] as const).map(f => (
                                 <button
-                                    onClick={() => setVisibleCount(p => p + 30)}
-                                    className="px-6 py-2 bg-[#0a0a0a] border border-[#151515] text-xs font-bold text-zinc-500 hover:text-white rounded transition-colors"
+                                    key={f}
+                                    onClick={() => setFilter(f)}
+                                    className={cn(
+                                        "px-4 h-10 rounded text-sm font-medium whitespace-nowrap border transition-colors",
+                                        filter === f
+                                            ? "bg-[#151515] border-[#222] text-white"
+                                            : "bg-[#080808] border-[#151515] text-zinc-500 hover:text-zinc-300"
+                                    )}
                                 >
-                                    Load More
+                                    {f === 'all' ? 'All' : f === 'no_data' ? 'No data' : STATUS_LABEL[f]}
                                 </button>
-                            </div>
-                        )}
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="text-xs text-zinc-500 font-medium">
+                        {filteredModels.length} model{filteredModels.length === 1 ? '' : 's'}
                     </div>
                 </div>
 
-                <footer className="mt-auto border-t border-[#111] py-12 px-8 bg-black">
-                    <div className="flex flex-col md:flex-row justify-between gap-8 opacity-40 hover:opacity-100 transition-opacity">
-                        <div className="space-y-4">
-                            <div className="text-white text-lg font-bold">Frenix</div>
-                            <p className="text-xs text-zinc-500 max-w-xs">High-performance AI gateway. One API, every model.</p>
+                {/* Grid */}
+                <AnimatePresence mode="popLayout">
+                    {loading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            {Array.from({ length: 9 }).map((_, i) => (
+                                <div key={i} className="p-5 rounded-xl border border-[#151515] bg-[#080808]">
+                                    <Skeleton className="h-5 w-40 bg-[#151515] mb-4" />
+                                    <Skeleton className="h-4 w-full bg-[#151515] mb-2" />
+                                    <Skeleton className="h-4 w-3/4 bg-[#151515]" />
+                                </div>
+                            ))}
                         </div>
-                        <div className="flex gap-16 text-xs text-zinc-500 font-bold uppercase tracking-widest">
-                            <div className="flex flex-col gap-2">
-                                <a href="#">Status</a>
-                                <a href="#">Pricing</a>
-                            </div>
-                            <div className="flex flex-col gap-2">
-                                <a href="#">Privacy</a>
-                                <a href="#">Terms</a>
-                            </div>
+                    ) : filteredModels.length === 0 ? (
+                        <div className="py-20 text-center">
+                            <p className="text-zinc-500">No models found</p>
                         </div>
-                    </div>
-                </footer>
-            </main>
+                    ) : (
+                        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            {filteredModels.map((m) => (
+                                <ModelCard key={m.model} stat={m} />
+                            ))}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
+            <style>{`
+                .no-scrollbar::-webkit-scrollbar { display: none; }
+                .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+            `}</style>
         </div>
     );
 }
 
-const styleTag = `
-<style>
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-</style>
-`;
+function SummaryTile({
+    label, value, icon: Icon, tone,
+}: {
+    label: string; value: number; icon: any;
+    tone: 'default' | 'operational' | 'degraded';
+}) {
+    return (
+        <div className="p-4 sm:p-5 rounded-xl border border-[#151515] bg-[#080808] flex items-center gap-4">
+            <div className={cn(
+                "size-10 rounded-lg flex items-center justify-center shrink-0",
+                tone === 'operational' && "bg-emerald-500/10 text-emerald-400",
+                tone === 'degraded' && "bg-amber-500/10 text-amber-400",
+                tone === 'default' && "bg-white/5 text-zinc-400",
+            )}>
+                <Icon size={18} />
+            </div>
+            <div className="min-w-0">
+                <div className="text-2xl font-bold tabular-nums leading-none">{value}</div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 mt-1">{label}</div>
+            </div>
+        </div>
+    );
+}
+
+function ModelCard({ stat }: { stat: ModelStat }) {
+    const isOperational = stat.status === 'operational';
+    const isDegraded = stat.status === 'degraded';
+    const noData = stat.status === 'no_data';
+    const totalRequests = stat.successful + stat.unsuccessful;
+    const rate = stat.successRate;
+    const rateTone = rate >= 99 ? 'text-emerald-400'
+        : rate >= 90 ? 'text-amber-400'
+        : rate > 0 ? 'text-rose-400'
+        : 'text-zinc-600';
+
+    return (
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className={cn(
+                "group relative p-5 rounded-xl border bg-[#080808] transition-colors flex flex-col gap-5",
+                isOperational && "border-[#151515] hover:border-emerald-500/30",
+                isDegraded && "border-amber-500/20 hover:border-amber-500/40",
+                noData && "border-[#151515] opacity-70",
+            )}
+        >
+            {/* Status pill */}
+            <div className="flex items-center justify-between">
+                <StatusBadge status={stat.status} />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-700">
+                    {noData ? '—' : `${totalRequests} req`}
+                </span>
+            </div>
+
+            {/* Model name */}
+            <div className="min-w-0">
+                <h3 className="text-[15px] font-bold text-white truncate">{stat.model}</h3>
+                <div className="flex items-center gap-1.5 text-[11px] text-zinc-600 mt-1">
+                    <Activity size={11} />
+                    <span className="font-medium uppercase tracking-wider">
+                        {totalRequests > 0 ? `${stat.successful} ok · ${stat.unsuccessful} fail` : 'Awaiting traffic'}
+                    </span>
+                </div>
+            </div>
+
+            {/* Success rate bar */}
+            <div>
+                <div className="flex items-baseline justify-between mb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Success rate</span>
+                    <span className={cn("text-lg font-bold tabular-nums", rateTone)}>
+                        {noData ? '—' : `${rate}%`}
+                    </span>
+                </div>
+                <div className="h-1.5 rounded-full bg-[#151515] overflow-hidden">
+                    <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: noData ? '0%' : `${Math.max(rate, rate > 0 ? 2 : 0)}%` }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className={cn(
+                            "h-full rounded-full",
+                            rate >= 99 ? "bg-emerald-500"
+                                : rate >= 90 ? "bg-amber-500"
+                                : rate > 0 ? "bg-rose-500"
+                                : "bg-zinc-700",
+                        )}
+                    />
+                </div>
+            </div>
+
+            {/* Latency */}
+            <div className="flex items-center justify-between pt-4 border-t border-[#111]">
+                <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-zinc-600">
+                    <Zap size={12} /> Avg latency
+                </span>
+                <span className="flex items-center gap-1 text-sm font-mono font-medium text-zinc-300 tabular-nums">
+                    <Clock size={12} className="text-zinc-600" />
+                    {noData ? '—' : formatLatency(stat.avgLatencyMs)}
+                </span>
+            </div>
+        </motion.div>
+    );
+}
+
+function StatusBadge({ status }: { status: ModelStatus }) {
+    const map = {
+        operational: { label: STATUS_LABEL.operational, icon: CheckCircle2, cls: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
+        degraded: { label: STATUS_LABEL.degraded, icon: AlertTriangle, cls: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
+        no_data: { label: STATUS_LABEL.no_data, icon: CircleDashed, cls: 'text-zinc-500 bg-white/5 border-[#222]' },
+    } as const;
+    const { label, icon: Icon, cls } = map[status];
+    return (
+        <div className={cn(
+            "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-tight border",
+            cls
+        )}>
+            <Icon size={11} />
+            {label}
+        </div>
+    );
+}
+
+function formatLatency(ms: number): string {
+    if (!ms || ms <= 0) return '—';
+    if (ms < 1000) return `${Math.round(ms)} ms`;
+    return `${(ms / 1000).toFixed(1)}s`;
+}
