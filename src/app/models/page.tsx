@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import {
     Search, Activity, RefreshCw, Zap, CheckCircle2, AlertTriangle,
-    CircleDashed, Clock
+    CircleDashed, Clock, type LucideIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -52,9 +52,14 @@ export default function ModelsPage() {
     };
 
     useEffect(() => {
-        fetchData();
+        const timer = setTimeout(() => {
+            fetchData();
+        }, 0);
         const interval = setInterval(() => fetchData(true), 30000);
-        return () => clearInterval(interval);
+        return () => {
+            clearTimeout(timer);
+            clearInterval(interval);
+        };
     }, []);
 
     const counts = useMemo(() => {
@@ -201,7 +206,7 @@ export default function ModelsPage() {
 function SummaryTile({
     label, value, icon: Icon, tone,
 }: {
-    label: string; value: number; icon: any;
+    label: string; value: number; icon: LucideIcon;
     tone: 'default' | 'operational' | 'degraded';
 }) {
     return (
@@ -228,10 +233,6 @@ function ModelCard({ stat }: { stat: ModelStat }) {
     const noData = stat.status === 'no_data';
     const totalRequests = stat.successful + stat.unsuccessful;
     const rate = stat.successRate;
-    const rateTone = rate >= 99 ? 'text-emerald-400'
-        : rate >= 90 ? 'text-amber-400'
-        : rate > 0 ? 'text-rose-400'
-        : 'text-zinc-600';
 
     return (
         <motion.div
@@ -269,23 +270,9 @@ function ModelCard({ stat }: { stat: ModelStat }) {
             <div>
                 <div className="flex items-baseline justify-between mb-2">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Success rate</span>
-                    <span className={cn("text-lg font-bold tabular-nums", rateTone)}>
+                    <span className="text-lg font-bold tabular-nums text-white">
                         {noData ? '—' : `${rate}%`}
                     </span>
-                </div>
-                <div className="h-1.5 rounded-full bg-[#151515] overflow-hidden">
-                    <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: noData ? '0%' : `${Math.max(rate, rate > 0 ? 2 : 0)}%` }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
-                        className={cn(
-                            "h-full rounded-full",
-                            rate >= 99 ? "bg-emerald-500"
-                                : rate >= 90 ? "bg-amber-500"
-                                : rate > 0 ? "bg-rose-500"
-                                : "bg-zinc-700",
-                        )}
-                    />
                 </div>
             </div>
 
